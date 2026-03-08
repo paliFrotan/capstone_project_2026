@@ -1,7 +1,7 @@
 ---
 name: User Story Template
-about: A template to create a basic user story
-title: 'User Story: Wise Wallet'
+about: Wise Wallet User Story
+title: 'User Story: <title>'
 labels: ''
 assignees: ''
 
