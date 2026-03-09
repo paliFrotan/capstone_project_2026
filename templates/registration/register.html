@@ -1,0 +1,19 @@
+<!-- prettier-ignore-->
+{% extends "base.html" %} 
+{% block title %}Register · WiseWallet{% endblock %}
+{% block content %}
+
+<div class="pt-3 pb-4">
+    <div class="glass rounded-4 p-3">
+        <h1 class="h5 mb-3">Create account</h1>
+
+        <form method="post" class="vstack gap-2">
+            {% csrf_token %} {{ form.as_p }}
+            <button class="btn btn-ww" type="submit">Register</button>
+            <a class="btn btn-outline-light" href="{% url 'login' %}"
+                >Already have an account?</a
+            >
+        </form>
+    </div>
+</div>
+{% endblock %}

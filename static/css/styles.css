@@ -1,0 +1,109 @@
+:root {
+    --ww-bg: #0b1020;
+    --ww-panel: rgba(16, 22, 45, 0.7);
+    --ww-border: rgba(255, 255, 255, 0.12);
+    --ww-text: rgba(255, 255, 255, 0.92);
+
+    --ww-amber: #f59e0b;
+    --ww-pink: #ff4fd8;
+    --ww-pink-2: #ff84e8;
+}
+
+body {
+    background:
+        radial-gradient(
+            1000px 600px at 10% -10%,
+            rgba(245, 158, 11, 0.22),
+            transparent 60%
+        ),
+        radial-gradient(
+            950px 600px at 110% 20%,
+            rgba(255, 79, 216, 0.18),
+            transparent 55%
+        ),
+        radial-gradient(
+            900px 600px at 40% 120%,
+            rgba(96, 165, 250, 0.14),
+            transparent 55%
+        ),
+        var(--ww-bg);
+    color: var(--ww-text);
+}
+
+.glass {
+    background: var(--ww-panel);
+    border: 1px solid var(--ww-border);
+    backdrop-filter: blur(10px);
+}
+
+.brand-badge {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    object-fit: cover;
+    border: 1px solid rgba(255, 79, 216, 0.28);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.btn-ww {
+    border: 1px solid rgba(255, 79, 216, 0.35);
+    background: linear-gradient(
+        180deg,
+        rgba(255, 79, 216, 0.22),
+        rgba(255, 79, 216, 0.1)
+    );
+    color: rgba(255, 255, 255, 0.92);
+}
+.btn-ww:hover {
+    border-color: rgba(255, 79, 216, 0.55);
+    color: white;
+}
+
+.kpi {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(16, 22, 45, 0.55);
+}
+
+.text-ww-pink {
+    color: rgba(255, 132, 232, 0.95);
+}
+.text-ww-amber {
+    color: rgba(255, 209, 138, 0.95);
+}
+
+.badge-income {
+    background: rgba(255, 79, 216, 0.14);
+    border: 1px solid rgba(255, 79, 216, 0.3);
+    color: rgba(255, 173, 244, 0.95);
+}
+
+.badge-expense {
+    background: rgba(245, 158, 11, 0.14);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    color: rgba(255, 209, 138, 0.95);
+}
+
+.table thead th {
+    background: rgba(16, 22, 45, 0.7);
+    color: rgba(255, 255, 255, 0.72);
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+.table td,
+.table th {
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Make forms feel mobile-first */
+.form-control,
+.form-select {
+    background: rgba(11, 16, 32, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: rgba(255, 255, 255, 0.92);
+}
+.form-control:focus,
+.form-select:focus {
+    border-color: rgba(255, 79, 216, 0.45);
+    box-shadow: 0 0 0 0.25rem rgba(255, 79, 216, 0.14);
+    background: rgba(11, 16, 32, 0.55);
+    color: rgba(255, 255, 255, 0.92);
+}
