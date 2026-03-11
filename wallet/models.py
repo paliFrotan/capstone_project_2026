@@ -2,6 +2,12 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
+def pence_to_gbp_str(pence: int) -> str:
+    sign = "-" if pence < 0 else ""
+    pence = abs(int(pence or 0))
+    pounds = pence // 100
+    pennies = pence % 100
+    return f"{sign}£{pounds:,}.{pennies:02d}"
 
 class StartingBalance(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -29,6 +35,21 @@ class Transaction(models.Model):
 
     class Meta:
         ordering = ["-date", "-created_at"]
+    def signed_amount_pence(self) -> int:
+        p = int(self.amount_pence or 0)
+        if str(self.kind).lower() == "expense":
+            return -abs(p)
+        return abs(p)
+
+    @property
+    def amount_str(self) -> str:
+        # shows positive amount
+        return pence_to_gbp_str(self.amount_pence)
+
+    @property
+    def signed_amount_str(self) -> str:
+        # income = +£, expense = -£
+        return pence_to_gbp_str(self.signed_amount_pence())    
 
     def signed_amount_pence(self) -> int:
         return self.amount_pence if self.kind == self.INCOME else -self.amount_pence

@@ -1,54 +1,227 @@
-from datetime import date as date_cls from django.contrib.auth.decorators import
-login_required from django.db.models import Sum from django.shortcuts import
-redirect, render from .forms import StartingBalanceForm, IncomeForm, ExpenseForm
-from .models import StartingBalance, Transaction def landing(request): return
-render(request, "wallet/landing.html") def pence_to_gbp_str(pence: int) -> str:
-sign = "-" if pence < 0 else "" pence = abs(int(pence)) pounds = pence // 100
-pennies = pence % 100 return f"{sign}£{pounds:,}.{pennies:02d}" def
-month_first_day(d: date_cls) -> date_cls: return date_cls(d.year, d.month, 1)
-def next_month_first_day(d: date_cls) -> date_cls: if d.month == 12: return
-date_cls(d.year + 1, 1, 1) return date_cls(d.year, d.month + 1, 1)
-@login_required def dashboard(request): today = date_cls.today() # month:
-'YYYY-MM' (optional) month_param = request.GET.get("month") if month_param: try:
-yyyy, mm = month_param.split("-") selected_month = date_cls(int(yyyy), int(mm),
-1) except Exception: selected_month = month_first_day(today) else:
-selected_month = month_first_day(today) # date: 'YYYY-MM-DD' (optional)
-date_param = request.GET.get("date") if date_param: try: yyyy, mm, dd =
-date_param.split("-") selected_date = date_cls(int(yyyy), int(mm), int(dd))
-except Exception: selected_date = today else: selected_date = today month_end =
-next_month_first_day(selected_month) # Forms (defaults) starting_balance_form =
-StartingBalanceForm( initial={"month": f"{selected_month:%Y-%m}", "amount_gbp":
-"0.00"} ) income_form = IncomeForm() expense_form = ExpenseForm() # Handle posts
-from the single dashboard page if request.method == "POST": action =
-request.POST.get("action") if action == "set_starting_balance":
-starting_balance_form = StartingBalanceForm(request.POST) if
-starting_balance_form.is_valid(): month =
-starting_balance_form.cleaned_data["month"] # date(YYYY,MM,1) amount_pence =
-starting_balance_form.cleaned_data["amount_gbp"] # int pennies
-StartingBalance.objects.update_or_create( user=request.user, month=month,
-defaults={"amount_pence": amount_pence}, ) return
-redirect(f"/dashboard/?month={month:%Y-%m}&date={selected_date:%Y-%m-%d}") elif
-action == "add_income": income_form = IncomeForm(request.POST) if
-income_form.is_valid(): Transaction.objects.create( user=request.user,
-date=income_form.cleaned_data["date"],
-description=income_form.cleaned_data["description"], kind=Transaction.INCOME,
-amount_pence=income_form.cleaned_data["amount_gbp"], ) return
-redirect(f"/dashboard/?month={selected_month:%Y-%m}&date={selected_date:%Y-%m-%d}")
-elif action == "add_expense": expense_form = ExpenseForm(request.POST) if
-expense_form.is_valid(): Transaction.objects.create( user=request.user,
-date=expense_form.cleaned_data["date"],
-description=expense_form.cleaned_data["description"], kind=Transaction.EXPENSE,
-amount_pence=expense_form.cleaned_data["amount_gbp"], ) return
-redirect(f"/dashboard/?month={selected_month:%Y-%m}&date={selected_date:%Y-%m-%d}")
-# Data starting_balance = StartingBalance.objects.filter(user=request.user,
-month=selected_month).first() starting_pence = starting_balance.amount_pence if
-starting_balance else 0 transactions = Transaction.objects.filter(
-user=request.user, date__gte=selected_month, date__lt=month_end, ) # balance at
-date (signed) signed_total = sum(t.signed_amount_pence() for t in
-transactions.filter(date__lte=selected_date)) balance_at_date_pence =
-starting_pence + signed_total context = { "selected_month": selected_month,
-"selected_date": selected_date, "starting_pence": starting_pence,
-"balance_at_date_pence": balance_at_date_pence, "transactions": transactions,
-"starting_balance_form": starting_balance_form, "income_form": income_form,
-"expense_form": expense_form, "pence_to_gbp_str": pence_to_gbp_str, } return
-render(request, "wallet/dashboard.html", context)
+<!-- prettier-ignore-->
+{% extends "base.html" %}
+{% load static %}
+{% block title %}WiseWallet - Dashboard{% endblock %}
+{% block content %}
+
+<div class="mb-3">
+    <h1 class="h3">Dashboard</h1>
+    <div class="text-white-50">
+        <!-- prettier-ignore -->
+        Month: {{ selected_month|date:"Y-m" }} · Date: {{ selected_date|date:"Y-m-d" }}
+    </div>
+</div>
+
+<div class="row g-3">
+    <!-- STARTING BALANCE PANEL -->
+    <div class="col-12 col-lg-4">
+        <div class="glass p-3 rounded-4">
+            <div class="fw-semibold mb-2">Starting balance</div>
+            <div class="display-6">{{ starting_balance_str }}</div>
+
+            <hr class="border-light opacity-25" />
+
+            <form method="post">
+                {% csrf_token %}
+                <input
+                    type="hidden"
+                    name="action"
+                    value="set_starting_balance"
+                />
+
+                <div class="mb-2">
+                    <label class="form-label">Month (YYYY-MM)</label>
+                    <input
+                        class="form-control"
+                        name="month"
+                        value="{{ selected_month|date:'Y-m' }}"
+                    />
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-label">Amount (£)</label>
+                    <input
+                        class="form-control"
+                        name="amount_gbp"
+                        placeholder="0.00"
+                    />
+                </div>
+
+                <button class="btn btn-ww w-100" type="submit">
+                    Save starting balance
+                </button>
+            </form>
+        </div>
+
+        <!-- BALANCE AT DATE PANEL -->
+        <div class="glass p-3 rounded-4 mt-3">
+            <div class="fw-semibold mb-2">Balance at selected date</div>
+            <div class="display-6">{{ balance_at_date_str }}</div>
+        </div>
+        <!-- NEW: Current month list card -->
+        <div class="glass p-3 rounded-4 mt-3">
+            <div class="fw-semibold mb-1">Current month transactions</div>
+            <div class="text-white-50 mb-3">
+                View all income and expenses for this month in date order. Edit
+                or delete items.
+            </div>
+
+            <a
+                class="btn btn-ww w-100"
+                href="{% url 'month_transactions' %}?month={{ selected_month|date:'Y-m' }}"
+            >
+                View / Edit selected month
+            </a>
+        </div>
+    </div>
+
+    <!-- ADD TRANSACTION PANEL -->
+    <div class="col-12 col-lg-8">
+        <div class="glass p-3 rounded-4">
+            <div
+                class="d-flex flex-wrap justify-content-between align-items-center gap-2"
+            >
+                <div class="fw-semibold">Add transaction</div>
+
+                <form
+                    class="d-flex gap-2"
+                    method="get"
+                    action="{% url 'dashboard' %}"
+                >
+                    <input
+                        class="form-control form-control-sm"
+                        type="month"
+                        name="month"
+                        value="{{ selected_month|date:'Y-m' }}"
+                    />
+                    <input
+                        class="form-control form-control-sm"
+                        type="date"
+                        name="date"
+                        value="{{ selected_date|date:'Y-m-d' }}"
+                    />
+                    <button class="btn btn-sm btn-outline-light" type="submit">
+                        Go
+                    </button>
+                </form>
+            </div>
+
+            <hr class="border-light opacity-25" />
+
+            <div class="row g-3">
+                <!-- INCOME FORM -->
+                <div class="col-12 col-md-6">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="add_income" />
+
+                        <div class="fw-semibold mb-2">Income</div>
+
+                        <input
+                            class="form-control mb-2"
+                            type="date"
+                            name="date"
+                            value="{{ selected_date|date:'Y-m-d' }}"
+                        />
+                        <input
+                            class="form-control mb-2"
+                            type="text"
+                            name="description"
+                            placeholder="Description"
+                        />
+                        <input
+                            class="form-control mb-2"
+                            type="text"
+                            inputmode="decimal"
+                            name="amount_gbp"
+                            placeholder="0.00"
+                        />
+
+                        <button class="btn btn-ww w-100" type="submit">
+                            Add income
+                        </button>
+                    </form>
+                </div>
+
+                <!-- EXPENSE FORM -->
+                <div class="col-12 col-md-6">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input
+                            type="hidden"
+                            name="action"
+                            value="add_expense"
+                        />
+
+                        <div class="fw-semibold mb-2">Expense</div>
+
+                        <input
+                            class="form-control mb-2"
+                            type="date"
+                            name="date"
+                            value="{{ selected_date|date:'Y-m-d' }}"
+                        />
+                        <input
+                            class="form-control mb-2"
+                            type="text"
+                            name="description"
+                            placeholder="Description"
+                        />
+                        <input
+                            class="form-control mb-2"
+                            type="text"
+                            inputmode="decimal"
+                            name="amount_gbp"
+                            placeholder="0.00"
+                        />
+
+                        <button class="btn btn-ww w-100" type="submit">
+                            Add expense
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <hr class="border-light opacity-25 mt-4" />
+
+            <div class="fw-semibold mb-2">Transactions (selected date)</div>
+
+            <div
+                class="table-responsive"
+                style="max-height: 320px; overflow-y: auto"
+            >
+                <table class="table table-dark table-sm align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Kind</th>
+                            <th class="text-end">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in transactions %}
+                        <tr>
+                            <td>{{ t.date|date:"Y-m-d" }}</td>
+                            <td>{{ t.description }}</td>
+                            <td>{{ t.kind }}</td>
+                            <td class="text-end">{{ t.amount_str }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td
+                                colspan="4"
+                                class="text-center text-white-50 py-4"
+                            >
+                                No transactions for this month yet.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

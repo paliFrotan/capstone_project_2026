@@ -3,10 +3,62 @@
 {% block title %}WiseWallet{% endblock %}
 {% block content %}
 
-<div class="pt-3 pb-4">
-    <div class="glass rounded-4 p-4">
-        <h1 class="h4 mb-2">WiseWallet</h1>
-        <p class="text-white-50 mb-0">Welcome! Please login or register.</p>
+  <body>
+      <div class="glass rounded-4 p-4 mt-3">
+        <h1 class="h3 mb-1">WiseWallet</h1>
+        <p class="text-white-50 mb-0">
+          Track your money monthly —
+          <span class="accent">fast</span>,
+          <span class="accent-amber">private</span>, simple.
+        </p>
+
+        <div class="row g-3 mt-3">
+          <div class="col-12 col-md-7">
+            <div class="kpi rounded-4 p-3">
+              <div class="fw-semibold mb-2">What you can do</div>
+              <ul class="mb-0 text-white-50">
+                <li><span class="text-white">Set a monthly starting balance</span></li>
+                <li><span class="text-white">Add income and expenses</span></li>
+                <li><span class="text-white">See your balance at any date</span></li>
+                <li><span class="text-white">Private per-user data</span></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-5">
+            <div class="kpi rounded-4 p-3 h-100 d-flex flex-column justify-content-between">
+              <div>
+                <div class="fw-semibold mb-2">Get started</div>
+                <p class="text-white-50 mb-3">Create an account to keep your finances private.</p>
+              </div>
+              <div class="d-grid gap-2">
+                <a class="btn btn-ww btn-lg" href="{% url 'register' %}">Create free account</a>
+                <a class="btn btn-outline-light" href="{% url 'login' %}">I already have an account</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-3 mt-3">
+          <div class="col-12 col-md-6">
+            <div class="kpi rounded-4 p-3">
+              <div class="fw-semibold mb-1">Monthly view</div>
+              <div class="text-white-50">
+                Choose a month and date, then view your balance and transactions clearly.
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6">
+            <div class="kpi rounded-4 p-3">
+              <div class="fw-semibold mb-1">Quick entry</div>
+              <div class="text-white-50">Add income/expenses on your phone. Enter £, stored as pennies.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center text-white-50 small py-4">© 2026 WiseWallet</div>
     </div>
-</div>
+
 {% endblock %}
