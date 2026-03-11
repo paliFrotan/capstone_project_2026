@@ -52,7 +52,7 @@ def register(request):
     return render(request, "registration/register.html", {"form": form})
 
 
-@login_required
+@login_required(login_url="login")
 def dashboard(request):
     today = date_cls.today()
 
