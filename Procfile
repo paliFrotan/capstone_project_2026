@@ -1,1 +1,1 @@
-web: gunicorn WiseWallet.wsgi
+web: gunicorn config.wsgi
