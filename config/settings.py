@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+
 import os
 import dj_database_url
 
@@ -32,7 +33,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.environ.get("DEBUG") == "True" else False
 
-ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com']
+ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com', 'capstone-wisewallet-app.herokuapp.com']
 
 
 # Application definition
@@ -55,7 +56,7 @@ INSTALLED_APPS = [
     'cloudinary',
     'wallet',
 ]
-SITE_ID = 1
+SITE_ID = 2 if DEBUG else 1
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'landing'
 
@@ -156,12 +157,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
-EMAIL_HOST = "smtp.office365.com"
+EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
 
-EMAIL_HOST_USER = "paligill123@hotmail.com"      # your Outlook/Hotmail address
-EMAIL_HOST_PASSWORD = "your-email-password"     # your Outlook password or app password
+EMAIL_HOST_USER = "mspaligill@gmail.com"      # your Outlook/Hotmail address
+EMAIL_HOST_PASSWORD ="lcnbwyvmzoaybgsr"    # your Outlook password or app password
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
