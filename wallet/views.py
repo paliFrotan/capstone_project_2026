@@ -1,18 +1,20 @@
 from datetime import date as date_cls
 
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.timezone import datetime
 
+
 from .forms import ExpenseForm, IncomeForm, StartingBalanceForm
 from .models import StartingBalance, Transaction
 
 def landing(request):
+    if request.user.is_authenticated:
+        return redirect("dashboard")
     return render(request, "wallet/landing.html")
-
 
 def pence_to_gbp_input_str(pence: int) -> str:
     """
@@ -47,6 +49,7 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
+            messages.success(request, "Your account has been created. Welcome!")
             return redirect("dashboard")
     else:
         form = UserCreationForm()
@@ -54,6 +57,7 @@ def register(request):
     return render(request, "registration/register.html", {"form": form})
 
 
+    
 @login_required(login_url="login")
 def dashboard(request):
     today = date_cls.today()
@@ -127,6 +131,8 @@ def dashboard(request):
                     kind=Transaction.EXPENSE,
                     amount_pence=expense_form.cleaned_data["amount_gbp"],
                 )
+                messages.info(request, "Transaction added")
+
                 return redirect(
                     f"/dashboard/?month={selected_month:%Y-%m}&date={selected_date:%Y-%m-%d}"
                 )
