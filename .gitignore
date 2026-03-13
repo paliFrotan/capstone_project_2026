@@ -72,3 +72,6 @@ Thumbs.db
 
 # Jupyter
 .ipynb_checkpoints/
+
+# Ignore fixtures directory
+fixtures/

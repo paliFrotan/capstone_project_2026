@@ -4,12 +4,24 @@
 {% block title %}WiseWallet - Dashboard{% endblock %}
 {% block content %}
 
-<div class="mb-3 d-flex align-items-center justify-content-between">
+<div
+    class="mb-3 d-flex align-items-center justify-content-between position-relative"
+    style="min-height: 3.5rem"
+>
     <div>
         <h1 class="h3">Dashboard</h1>
         Month: {{ selected_month|date:"Y-m" }} · Date:
         {{selected_date|date:"Y-m-d" }}
+        <div class="text-white-50 small mt-1">
+            All of {{ selected_month|date:'F Y' }}
+        </div>
     </div>
+    <!-- Toast container between Dashboard and cog -->
+    <div
+        id="dashboard-toast"
+        class="position-absolute start-50 translate-middle-x"
+        style="top: 0.2rem; z-index: 1055; display: none"
+    ></div>
     <div class="d-flex align-items-center gap-2">
         <button
             id="settings-cog"
@@ -31,7 +43,7 @@
         </button>
     </div>
 </div>
-
+<div id="toast-container"></div>
 <!-- Reset Month Bootstrap Modal -->
 <div
     class="modal fade"
@@ -309,5 +321,63 @@
                 .getElementById("show-reset-confirm")
                 .classList.toggle("d-none");
         });
+    function showDashboardToast(message, type = "info") {
+        const toastDiv = document.getElementById("dashboard-toast");
+        toastDiv.innerHTML = `<div class="alert alert-${type} mb-0 py-2 px-3 rounded-3 shadow">${message}</div>`;
+        toastDiv.style.display = "block";
+        toastDiv.style.opacity = "1";
+        toastDiv.style.transition = "opacity 0.5s";
+        setTimeout(() => {
+            toastDiv.style.opacity = "1";
+        }, 10);
+        setTimeout(() => {
+            toastDiv.style.opacity = "0";
+            setTimeout(() => {
+                toastDiv.style.display = "none";
+                toastDiv.innerHTML = "";
+                toastDiv.style.opacity = "1";
+            }, 500);
+        }, 3000);
+    }
+    {% if messages %}
+        {% for message in messages %}
+            showDashboardToast("{{ message|escapejs }}", "{{ message.tags|default:'info' }}");
+        {% endfor %}
+    {% endif %}
 </script>
 {% endblock %}
+
+<script>
+    function showDashboardToast(message, type = "info") {
+        const toastDiv = document.getElementById("dashboard-toast");
+        toastDiv.innerHTML = `<div class="alert alert-${type} mb-0 py-2 px-3 rounded-3 shadow">${message}</div>`;
+        toastDiv.style.display = "block";
+        toastDiv.style.opacity = "1";
+        toastDiv.style.transition = "opacity 0.5s";
+        setTimeout(() => {
+            toastDiv.style.opacity = "1";
+        }, 10);
+        setTimeout(() => {
+            toastDiv.style.opacity = "0";
+            setTimeout(() => {
+                toastDiv.style.display = "none";
+                toastDiv.innerHTML = "";
+                toastDiv.style.opacity = "1";
+            }, 500);
+        }, 3000);
+    }
+</script>
+
+<!-- prettier-ignore-->
+{% if messages %} 
+{% for message in messages %} showDashboardToast
+("{{message|escapejs }}", "{{ message.tags|default:'info' }}"); 
+{% endfor %}
+{% endif %}
+<div id="toast-container"></div>
+
+{% if messages %}
+<script>
+    showToast("Hello", "success");
+</script>
+{% endif %}

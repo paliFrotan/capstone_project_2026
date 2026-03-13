@@ -117,6 +117,7 @@ def dashboard(request):
                     kind=Transaction.INCOME,
                     amount_pence=income_form.cleaned_data["amount_gbp"],
                 )
+                messages.success(request, "Transaction added")
                 return redirect(
                     f"/dashboard/?month={selected_month:%Y-%m}&date={selected_date:%Y-%m-%d}"
                 )
