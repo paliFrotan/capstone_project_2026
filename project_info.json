@@ -1,0 +1,58 @@
+{
+    "date": "2026-03-13",
+    "user_id": 1,
+    "starting_balance": {
+        "month": "2026-03-01",
+        "amount_pence": 250000
+    },
+    "transactions": [
+        {
+            "date": "2026-03-01",
+            "description": "Salary",
+            "kind": "income",
+            "amount_pence": 300000
+        },
+        {
+            "date": "2026-03-15",
+            "description": "Freelance Project",
+            "kind": "income",
+            "amount_pence": 50000
+        },
+        {
+            "date": "2026-03-02",
+            "description": "Rent",
+            "kind": "expense",
+            "amount_pence": 120000
+        },
+        {
+            "date": "2026-03-05",
+            "description": "Groceries",
+            "kind": "expense",
+            "amount_pence": 25000
+        },
+        {
+            "date": "2026-03-10",
+            "description": "Utilities",
+            "kind": "expense",
+            "amount_pence": 15000
+        },
+        {
+            "date": "2026-03-12",
+            "description": "Dining Out",
+            "kind": "expense",
+            "amount_pence": 8000
+        },
+        {
+            "date": "2026-03-20",
+            "description": "Internet",
+            "kind": "expense",
+            "amount_pence": 6000
+        },
+        {
+            "date": "2026-03-25",
+            "description": "Transport",
+            "kind": "expense",
+            "amount_pence": 10000
+        }
+    ]
+}

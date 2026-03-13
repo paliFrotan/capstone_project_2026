@@ -137,6 +137,30 @@ def dashboard(request):
                     f"/dashboard/?month={selected_month:%Y-%m}&date={selected_date:%Y-%m-%d}"
                 )
 
+        elif action == "reset_month":
+            # Parse month from form (YYYY-MM)
+            month_str = request.POST.get("month")
+            try:
+                yyyy, mm = month_str.split("-")
+                month = date_cls(int(yyyy), int(mm), 1)
+                month_end = next_month_first_day(month)
+            except Exception:
+                month = selected_month
+                month_end = next_month_first_day(selected_month)
+            # Delete all transactions for this user and month
+            Transaction.objects.filter(
+                user=request.user,
+                date__gte=month,
+                date__lt=month_end
+            ).delete()
+            # Delete starting balance for this user and month
+            StartingBalance.objects.filter(
+                user=request.user,
+                month=month
+            ).delete()
+            messages.success(request, f"All transactions and starting balance for {month:%Y-%m} have been cleared.")
+            return redirect(f"/dashboard/?month={month:%Y-%m}&date={selected_date:%Y-%m-%d}")
+
     # --- Starting balance for the month ---
     starting_balance = StartingBalance.objects.filter(
         user=request.user, month=selected_month

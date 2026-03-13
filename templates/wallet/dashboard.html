@@ -4,9 +4,85 @@
 {% block title %}WiseWallet - Dashboard{% endblock %}
 {% block content %}
 
-<div class="mb-3">
-    <h1 class="h3">Dashboard</h1>
-        Month: {{ selected_month|date:"Y-m" }} · Date: {{selected_date|date:"Y-m-d" }}
+<div class="mb-3 d-flex align-items-center justify-content-between">
+    <div>
+        <h1 class="h3">Dashboard</h1>
+        Month: {{ selected_month|date:"Y-m" }} · Date:
+        {{selected_date|date:"Y-m-d" }}
+    </div>
+    <div class="d-flex align-items-center gap-2">
+        <button
+            id="settings-cog"
+            class="btn btn-link p-0"
+            title="Settings"
+            style="font-size: 1.7rem; color: #888"
+        >
+            <i class="bi bi-gear"></i>
+        </button>
+        <button
+            id="show-reset-confirm"
+            class="btn btn-link p-0 text-danger d-none"
+            title="Reset Month"
+            style="font-size: 1.4rem"
+            data-bs-toggle="modal"
+            data-bs-target="#resetMonthModal"
+        >
+            <i class="bi bi-power"></i>
+        </button>
+    </div>
+</div>
+
+<!-- Reset Month Bootstrap Modal -->
+<div
+    class="modal fade"
+    id="resetMonthModal"
+    tabindex="-1"
+    aria-labelledby="resetMonthModalLabel"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass rounded-4">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="resetMonthModalLabel">
+                    Reset Month
+                </h5>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-white-50 mb-3">
+                    Are you sure you want to delete all transactions and the
+                    starting balance for
+                    <strong>{{ selected_month|date:'F Y' }}</strong>? This
+                    cannot be undone.
+                </p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center">
+                <form method="post" class="d-inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="reset_month" />
+                    <input
+                        type="hidden"
+                        name="month"
+                        value="{{ selected_month|date:'Y-m' }}"
+                    />
+                    <button class="btn btn-outline-danger" type="submit">
+                        Yes, reset
+                    </button>
+                </form>
+                <button
+                    type="button"
+                    class="btn btn-outline-light"
+                    data-bs-dismiss="modal"
+                >
+                    Cancel
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -223,4 +299,15 @@
     </div>
 </div>
 
+{% endblock %} {% block scripts %} {{ block.super }}
+<script>
+    // Show/hide reset button
+    document
+        .getElementById("settings-cog")
+        .addEventListener("click", function () {
+            document
+                .getElementById("show-reset-confirm")
+                .classList.toggle("d-none");
+        });
+</script>
 {% endblock %}
