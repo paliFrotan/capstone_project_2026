@@ -56,7 +56,7 @@ INSTALLED_APPS = [
     'cloudinary',
     'wallet',
 ]
-SITE_ID = 1 if DEBUG else 2
+SITE_ID = 2 if DEBUG else 1
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'landing'
 

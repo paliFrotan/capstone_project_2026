@@ -1,9 +1,11 @@
 from datetime import date as date_cls
 
 from django.contrib.auth import login
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import redirect, render, get_object_or_404
+from django.utils.timezone import datetime
 
 from .forms import ExpenseForm, IncomeForm, StartingBalanceForm
 from .models import StartingBalance, Transaction
@@ -70,6 +72,8 @@ def dashboard(request):
     # --- Month ALWAYS follows the selected date ---
     selected_month = month_first_day(selected_date)
     month_end = next_month_first_day(selected_month)
+
+    
 
     # --- Forms ---
     starting_balance_form = StartingBalanceForm(
@@ -158,20 +162,16 @@ def dashboard(request):
         "starting_balance_str": pence_to_gbp_input_str(starting_pence),
         "balance_at_date_str": pence_to_gbp_input_str(balance_at_date_pence),
     }
-    return render(request, "wallet/dashboard.html", context)
+    #messages.success(request, "You are now logged in.")
 
+    return render(request, "wallet/dashboard.html", context)
 
 
 
 @login_required
 def month_transactions(request):
-    """
-    Show all income + expenses for the selected month.
-    If no month is provided, default to the current month.
-    """
-
-    # 1. Read month from URL: ?month=YYYY-MM
     month_param = request.GET.get("month")
+    page = int(request.GET.get("page", 1))
 
     if month_param:
         yyyy, mm = month_param.split("-")
@@ -182,27 +182,38 @@ def month_transactions(request):
 
     month_end = next_month_first_day(month_start)
 
-    # 2. Query transactions for that month
-    transactions = (
-        Transaction.objects.filter(
-            user=request.user,
-            date__gte=month_start,
-            date__lt=month_end,
-        )
-        .order_by("date", "id")
-    )
+    transactions = Transaction.objects.filter(
+        user=request.user,
+        date__gte=month_start,
+        date__lt=month_end,
+    ).order_by("date", "id")
+    from django.core.paginator import Paginator
+
+
+    # ⭐ Add pagination
+    paginator = Paginator(transactions, 3)   # or whatever number per page
+    page_obj = paginator.get_page(page)
 
     return render(
         request,
         "wallet/month_transactions.html",
         {
             "month_start": month_start,
-            "transactions": transactions,
+            "transactions": page_obj,   # ⭐ use page_obj
+            "page": page_obj.number,    # ⭐ correct page number
+            "paginator": paginator,
+            "page_obj": page_obj,
+            # ⭐ Add these
+            "year": month_start.year,
+            "month": month_start.month,
+
         },
     )
+   
 @login_required
 def transaction_edit(request, pk: int):
     tx = get_object_or_404(Transaction, pk=pk, user=request.user)
+    
 
     FormClass = IncomeForm if tx.kind == Transaction.INCOME else ExpenseForm
 
@@ -213,7 +224,14 @@ def transaction_edit(request, pk: int):
             tx.description = form.cleaned_data["description"]
             tx.amount_pence = form.cleaned_data["amount_gbp"]
             tx.save()
-            return redirect(f"/month-transactions/?month={tx.date:%Y-%m}")
+            month = request.GET.get("month")
+            page = request.GET.get("page", 1)                   
+            return redirect(f"/month/?month={month}&page={page}")
+
+        # ⭐ FIX: redirect to the correct URL
+        
+        #return redirect(f"/month/?month={month}&page={page}")
+        #return redirect(f"/month-transactions/?month={tx.date:%Y-%m}&page={page}")
     else:
         form = FormClass(
             initial={
@@ -245,3 +263,28 @@ def transaction_delete(request, pk: int):
         "wallet/transaction_delete.html",
         {"tx": tx},
     )
+
+
+def print_month_report(request, year, month):
+    # Get all transactions for the month
+    transactions = Transaction.objects.filter(
+        date__year=year,
+        date__month=month
+    ).order_by('date')
+
+    income_pence = sum(t.amount_pence for t in transactions if t.kind == Transaction.INCOME)
+    expenses_pence = sum(t.amount_pence for t in transactions if t.kind == Transaction.EXPENSE)
+    balance_pence = income_pence - expenses_pence
+
+    context = {
+        'year': year,
+        'month': month,
+        'transactions': transactions,
+        'income': income_pence / 100,
+        'expenses': expenses_pence / 100,
+        'balance': balance_pence / 100,
+    }
+
+    return render(request, 'wallet/print_month_report.html', context)
+
+

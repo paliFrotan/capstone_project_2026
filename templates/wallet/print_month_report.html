@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="report-wrapper">
+
+    <div class="report-header">
+        <h1 class="report-title">Monthly Report</h1>
+        <h2 class="report-subtitle">{{ month }}/{{ year }}</h2>
+
+        <button class="ww-btn no-print" onclick="window.print()">
+            Print Report
+        </button>
+    </div>
+
+    <div class="summary-box glass-panel">
+        <div class="summary-item">
+            <span class="label">Total Income</span>
+            <span class="value income">£{{ income }}</span>
+        </div>
+        <div class="summary-item">
+            <span class="label">Total Expenses</span>
+            <span class="value expense">£{{ expenses }}</span>
+        </div>
+        <div class="summary-item">
+            <span class="label">Balance</span>
+            <span class="value balance">£{{ balance }}</span>
+        </div>
+    </div>
+
+    <table class="report-table glass-panel">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Kind</th>
+                <th class="amount">Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in transactions %}
+            <tr>
+                <td>{{ t.date|date:"Y-m-d" }}</td>
+                <td>{{ t.description }}</td>
+                <td class="kind {{ t.kind }}">{{ t.kind }}</td>
+                <td class="amount {{ t.kind }}">{{ t.signed_amount_str }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="empty-row">
+                    No transactions for this month.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock %}

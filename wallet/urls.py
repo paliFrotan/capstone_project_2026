@@ -57,4 +57,6 @@ urlpatterns = [
     path("month/", month_transactions, name="month_transactions"),
     path("transaction/<int:pk>/edit/", transaction_edit, name="transaction_edit"),
     path("transaction/<int:pk>/delete/", transaction_delete, name="transaction_delete"),
+    path('report/<int:year>/<int:month>/', views.print_month_report, name='print_month_report'),
+
 ]
