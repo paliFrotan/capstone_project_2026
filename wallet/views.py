@@ -251,6 +251,13 @@ def transaction_edit(request, pk: int):
     FormClass = IncomeForm if tx.kind == Transaction.INCOME else ExpenseForm
 
     if request.method == "POST":
+        if "cancel" in request.POST:
+            from django.contrib import messages
+            messages.info(request, "Edit cancelled.")
+            month = request.GET.get("month")
+            page = request.GET.get("page", 1)
+            url = reverse("month_transactions") + f"?month={month}&page={page}"
+            return HttpResponseRedirect(url)
         form = FormClass(request.POST)
         if form.is_valid():
             tx.date = form.cleaned_data["date"]
@@ -259,14 +266,6 @@ def transaction_edit(request, pk: int):
             tx.save()
             from django.contrib import messages
             messages.success(request, "Transaction updated successfully.")
-            month = request.GET.get("month")
-            page = request.GET.get("page", 1)
-            url = reverse("month_transactions") + f"?month={month}&page={page}"
-            return HttpResponseRedirect(url)
-        # If cancel, add a message and redirect
-        if "cancel" in request.POST:
-            from django.contrib import messages
-            messages.info(request, "Edit cancelled.")
             month = request.GET.get("month")
             page = request.GET.get("page", 1)
             url = reverse("month_transactions") + f"?month={month}&page={page}"

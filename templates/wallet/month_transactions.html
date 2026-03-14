@@ -148,7 +148,13 @@
     }
     {% if messages %}
         {% for message in messages %}
-            showMonthToast("{{ message|escapejs }}", "{{ message.tags|default:'info' }}");
+            {% if "cancel" in message|lower %}
+            showMonthToast("{{ message|escapejs }}", "info");
+            {% elif "delete" in message|lower %}
+            showMonthToast("{{ message|escapejs }}", "danger");
+            {% else %}
+            showMonthToast("{{ message|escapejs }}", "success");
+            {% endif %}
         {% endfor %}
     {% endif %}
 </script>
