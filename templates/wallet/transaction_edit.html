@@ -40,11 +40,14 @@
 
         <div class="d-flex gap-2">
             <button class="btn btn-ww" type="submit">Save</button>
-            <a
+            <button
                 class="btn btn-outline-light"
-                href="{% url 'month_transactions' %}?month={{ request.GET.month }}&page={{ request.GET.page }}"
-                >Cancel</a
+                type="submit"
+                name="cancel"
+                value="1"
             >
+                Cancel
+            </button>
         </div>
     </form>
 </div>

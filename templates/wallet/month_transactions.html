@@ -8,6 +8,11 @@
         <h1 class="h3 mb-1">Current month</h1>
         <div class="text-white-50">Month: {{ month_start|date:"Y-m" }}</div>
     </div>
+    <div
+        id="month-toast"
+        class="position-fixed top-0 start-50 translate-middle-x"
+        style="z-index: 2000; display: none; margin-top: 1rem"
+    ></div>
 
     <a class="btn btn-sm btn-outline-light" href="{% url 'dashboard' %}">
         Back to dashboard
@@ -120,3 +125,31 @@
         {% endblock %}
     </div>
 </div>
+
+{% block scripts %} {{ block.super }}
+<script>
+    function showMonthToast(message, type = "info") {
+        const toastDiv = document.getElementById("month-toast");
+        toastDiv.innerHTML = `<div class="alert alert-${type} mb-0 py-2 px-3 rounded-3 shadow">${message}</div>`;
+        toastDiv.style.display = "block";
+        toastDiv.style.opacity = "1";
+        toastDiv.style.transition = "opacity 0.5s";
+        setTimeout(() => {
+            toastDiv.style.opacity = "1";
+        }, 10);
+        setTimeout(() => {
+            toastDiv.style.opacity = "0";
+            setTimeout(() => {
+                toastDiv.style.display = "none";
+                toastDiv.innerHTML = "";
+                toastDiv.style.opacity = "1";
+            }, 500);
+        }, 3000);
+    }
+    {% if messages %}
+        {% for message in messages %}
+            showMonthToast("{{ message|escapejs }}", "{{ message.tags|default:'info' }}");
+        {% endfor %}
+    {% endif %}
+</script>
+{% endblock %}

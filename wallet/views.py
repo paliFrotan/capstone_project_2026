@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.timezone import datetime
+from django.urls import reverse
+from django.http import HttpResponseRedirect
 
 
 from .forms import ExpenseForm, IncomeForm, StartingBalanceForm
@@ -255,14 +257,20 @@ def transaction_edit(request, pk: int):
             tx.description = form.cleaned_data["description"]
             tx.amount_pence = form.cleaned_data["amount_gbp"]
             tx.save()
+            from django.contrib import messages
+            messages.success(request, "Transaction updated successfully.")
             month = request.GET.get("month")
-            page = request.GET.get("page", 1)                   
-            return redirect(f"/month/?month={month}&page={page}")
-
-        # ⭐ FIX: redirect to the correct URL
-        
-        #return redirect(f"/month/?month={month}&page={page}")
-        #return redirect(f"/month-transactions/?month={tx.date:%Y-%m}&page={page}")
+            page = request.GET.get("page", 1)
+            url = reverse("month_transactions") + f"?month={month}&page={page}"
+            return HttpResponseRedirect(url)
+        # If cancel, add a message and redirect
+        if "cancel" in request.POST:
+            from django.contrib import messages
+            messages.info(request, "Edit cancelled.")
+            month = request.GET.get("month")
+            page = request.GET.get("page", 1)
+            url = reverse("month_transactions") + f"?month={month}&page={page}"
+            return HttpResponseRedirect(url)
     else:
         form = FormClass(
             initial={
@@ -287,6 +295,8 @@ def transaction_delete(request, pk: int):
 
     if request.method == "POST":
         tx.delete()
+        from django.contrib import messages
+        messages.success(request, "Transaction deleted successfully.")
         return redirect("month_transactions")
 
     return render(
