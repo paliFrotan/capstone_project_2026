@@ -552,3 +552,36 @@ body {
 .message.info {
     border-left: 6px solid var(--accent-color);
 }
+/* Toast container */
+#month-toast {
+    display: flex;
+    justify-content: center;
+}
+
+/* Toast box */
+.ww-toast {
+    backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: white;
+    font-weight: 500;
+}
+
+/* Icon styling */
+.toast-icon {
+    font-size: 1.2rem;
+}
+
+/* Colour accents */
+.alert-success .toast-icon {
+    color: #4ade80;
+} /* green */
+.alert-warning .toast-icon {
+    color: #facc15;
+} /* yellow */
+.alert-info .toast-icon {
+    color: #60a5fa;
+} /* blue */
+.alert-danger .toast-icon {
+    color: #f87171;
+} /* red */

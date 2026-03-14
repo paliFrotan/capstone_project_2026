@@ -13,6 +13,30 @@ from django.http import HttpResponseRedirect
 from .forms import ExpenseForm, IncomeForm, StartingBalanceForm
 from .models import StartingBalance, Transaction
 
+from decimal import Decimal, InvalidOperation
+
+def parse_amount(value):
+    try:
+        # Accept integer-like strings as pounds (e.g., '34' -> 3400 pence)
+        if value is not None and isinstance(value, str):
+            value = value.strip()
+            if value.isdigit():
+                return int(value) * 100
+            if value.count('.') == 1 and value.replace('.', '').isdigit():
+                # Accepts '34.56' as 3456 pence
+                pounds, pence = value.split('.')
+                if len(pence) == 1:
+                    pence += '0'  # '34.5' -> '34.50'
+                elif len(pence) > 2:
+                    pence = pence[:2]  # Truncate extra decimals
+                return int(pounds) * 100 + int(pence)
+        # Fallback to Decimal for other cases
+        dec = Decimal(value)
+        return int(dec * 100)
+    except (InvalidOperation, TypeError, ValueError):
+        return None
+
+
 def landing(request):
     if request.user.is_authenticated:
         return redirect("dashboard")
@@ -92,64 +116,79 @@ def dashboard(request):
     if request.method == "POST":
         action = request.POST.get("action")
 
+        # -----------------------------
+        # 1. SET STARTING BALANCE
+        # -----------------------------
         if action == "set_starting_balance":
-            starting_balance_form = StartingBalanceForm(request.POST)
-            if starting_balance_form.is_valid():
-                month_obj = starting_balance_form.cleaned_data["month"]
-                month = date_cls(month_obj.year, month_obj.month, 1)
-                amount_pence = starting_balance_form.cleaned_data["amount_gbp"]
+            amount = parse_amount(request.POST.get("amount_gbp"))
+            if amount is None:
+                messages.error(request, "Starting balance must be a number")
+                return redirect("dashboard")
+            # Parse month (YYYY-MM)
+            month_str = request.POST.get("month")
+            yyyy, mm = month_str.split("-")
+            month = date_cls(int(yyyy), int(mm), 1)
+            StartingBalance.objects.update_or_create(
+                user=request.user,
+                month=month,
+                defaults={"amount_pence": amount},
+            )
+            messages.success(request, "Starting balance saved successfully.")
+            return redirect(
+                f"/dashboard/?month={month:%Y-%m}&date={selected_date:%Y-%m-%d}"
+            )
 
-                StartingBalance.objects.update_or_create(
-                    user=request.user,
-                    month=month,
-                    defaults={"amount_pence": amount_pence},
-                )
-
-                return redirect(
-                    f"/dashboard/?month={month:%Y-%m}&date={selected_date:%Y-%m-%d}"
-                )
-
+        # -----------------------------
+        # 2. ADD INCOME
+        # -----------------------------
         elif action == "add_income":
-            income_form = IncomeForm(request.POST)
-            if income_form.is_valid():
-                Transaction.objects.create(
-                    user=request.user,
-                    date=income_form.cleaned_data["date"],
-                    description=income_form.cleaned_data["description"],
-                    kind=Transaction.INCOME,
-                    amount_pence=income_form.cleaned_data["amount_gbp"],
-                )
-                messages.success(request, "Transaction added")
-                return redirect(
-                    f"/dashboard/?month={selected_month:%Y-%m}&date={selected_date:%Y-%m-%d}"
-                )
+            amount = parse_amount(request.POST.get("amount_gbp"))
+            if amount is None:
+                messages.error(request, "Income amount must be a number")
+                return redirect("dashboard")
+            Transaction.objects.create(
+                user=request.user,
+                date=request.POST.get("date"),
+                description=request.POST.get("description"),
+                kind=Transaction.INCOME,
+                amount_pence=amount,
+            )
+            messages.success(request, "Income added")
+            return redirect(
+                f"/dashboard/?month={selected_month:%Y-%m}&date={selected_date:%Y-%m-%d}"
+            )
 
+        # -----------------------------
+        # 3. ADD EXPENSE
+        # -----------------------------
         elif action == "add_expense":
-            expense_form = ExpenseForm(request.POST)
-            if expense_form.is_valid():
-                Transaction.objects.create(
-                    user=request.user,
-                    date=expense_form.cleaned_data["date"],
-                    description=expense_form.cleaned_data["description"],
-                    kind=Transaction.EXPENSE,
-                    amount_pence=expense_form.cleaned_data["amount_gbp"],
-                )
-                messages.info(request, "Transaction added")
+            amount = parse_amount(request.POST.get("amount_gbp"))
+            if amount is None:
+                messages.error(request, "Expense amount must be a number")
+                return redirect("dashboard")
+            Transaction.objects.create(
+                user=request.user,
+                date=request.POST.get("date"),
+                description=request.POST.get("description"),
+                kind=Transaction.EXPENSE,
+                amount_pence=amount,
+            )
+            messages.success(request, "Expense added")
+            return redirect(
+                f"/dashboard/?month={selected_month:%Y-%m}&date={selected_date:%Y-%m-%d}"
+            )
 
-                return redirect(
-                    f"/dashboard/?month={selected_month:%Y-%m}&date={selected_date:%Y-%m-%d}"
-                )
-
+        # -----------------------------
+        # 4. RESET MONTH
+        # -----------------------------
         elif action == "reset_month":
-            # Parse month from form (YYYY-MM)
             month_str = request.POST.get("month")
             try:
                 yyyy, mm = month_str.split("-")
                 month = date_cls(int(yyyy), int(mm), 1)
-                month_end = next_month_first_day(month)
             except Exception:
                 month = selected_month
-                month_end = next_month_first_day(selected_month)
+            month_end = next_month_first_day(month)
             # Delete all transactions for this user and month
             Transaction.objects.filter(
                 user=request.user,
@@ -161,8 +200,10 @@ def dashboard(request):
                 user=request.user,
                 month=month
             ).delete()
-            messages.success(request, f"All transactions and starting balance for {month:%Y-%m} have been cleared.")
-            return redirect(f"/dashboard/?month={month:%Y-%m}&date={selected_date:%Y-%m-%d}")
+            messages.warning(request, "Month reset successfully.")
+            return redirect(
+                f"/dashboard/?month={month:%Y-%m}&date={selected_date:%Y-%m-%d}"
+            )
 
     # --- Starting balance for the month ---
     starting_balance = StartingBalance.objects.filter(
@@ -293,8 +334,11 @@ def transaction_delete(request, pk: int):
     tx = get_object_or_404(Transaction, pk=pk, user=request.user)
 
     if request.method == "POST":
-        tx.delete()
         from django.contrib import messages
+        if "cancel" in request.POST:
+            messages.info(request, "Delete cancelled.")
+            return redirect("month_transactions")
+        tx.delete()
         messages.success(request, "Transaction deleted successfully.")
         return redirect("month_transactions")
 

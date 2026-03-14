@@ -43,7 +43,11 @@
         </button>
     </div>
 </div>
-<div id="toast-container"></div>
+<div
+    id="dashboard-toast"
+    class="position-fixed top-0 start-50 translate-middle-x"
+    style="z-index: 2000; display: none; margin-top: 1rem"
+></div>
 <!-- Reset Month Bootstrap Modal -->
 <div
     class="modal fade"
@@ -321,36 +325,23 @@
                 .getElementById("show-reset-confirm")
                 .classList.toggle("d-none");
         });
-    function showDashboardToast(message, type = "info") {
-        const toastDiv = document.getElementById("dashboard-toast");
-        toastDiv.innerHTML = `<div class="alert alert-${type} mb-0 py-2 px-3 rounded-3 shadow">${message}</div>`;
-        toastDiv.style.display = "block";
-        toastDiv.style.opacity = "1";
-        toastDiv.style.transition = "opacity 0.5s";
-        setTimeout(() => {
-            toastDiv.style.opacity = "1";
-        }, 10);
-        setTimeout(() => {
-            toastDiv.style.opacity = "0";
-            setTimeout(() => {
-                toastDiv.style.display = "none";
-                toastDiv.innerHTML = "";
-                toastDiv.style.opacity = "1";
-            }, 500);
-        }, 3000);
-    }
-    {% if messages %}
-        {% for message in messages %}
-            showDashboardToast("{{ message|escapejs }}", "{{ message.tags|default:'info' }}");
-        {% endfor %}
-    {% endif %}
-</script>
-{% endblock %}
 
-<script>
     function showDashboardToast(message, type = "info") {
+        // Map toast types to Bootstrap Icons
+        const icons = {
+            success: "bi-check-circle-fill",
+            warning: "bi-exclamation-triangle-fill",
+            info: "bi-info-circle-fill",
+            error: "bi-x-circle-fill",
+            danger: "bi-x-circle-fill",
+        };
         const toastDiv = document.getElementById("dashboard-toast");
-        toastDiv.innerHTML = `<div class="alert alert-${type} mb-0 py-2 px-3 rounded-3 shadow">${message}</div>`;
+        toastDiv.innerHTML = `
+            <div class="alert alert-${type} d-flex align-items-center gap-2 mb-0 py-2 px-3 rounded-3 shadow">
+                <i class="bi ${icons[type] || icons.info} toast-icon"></i>
+                <span>${message}</span>
+            </div>
+        `;
         toastDiv.style.display = "block";
         toastDiv.style.opacity = "1";
         toastDiv.style.transition = "opacity 0.5s";
@@ -367,17 +358,13 @@
         }, 3000);
     }
 </script>
-
-<!-- prettier-ignore-->
-{% if messages %} 
-{% for message in messages %} showDashboardToast
-("{{message|escapejs }}", "{{ message.tags|default:'info' }}"); 
-{% endfor %}
-{% endif %}
-<div id="toast-container"></div>
-
 {% if messages %}
 <script>
-    showToast("Hello", "success");
+    {% for message in messages %}
+        showDashboardToast(
+            "{{ message|escapejs }}",
+            "{{ message.tags|default:'info' }}"
+        );
+    {% endfor %}
 </script>
-{% endif %}
+{% endif %} {% endblock %}
