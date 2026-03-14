@@ -1,3 +1,43 @@
+
+import csv
+from io import TextIOWrapper
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib import messages
+from django.shortcuts import redirect
+
+@login_required
+def import_csv(request):
+    if request.method == 'POST' and request.FILES.get('csv_file'):
+        csv_file = request.FILES['csv_file']
+        try:
+            file_wrapper = TextIOWrapper(csv_file.file, encoding='utf-8')
+            reader = csv.DictReader(file_wrapper)
+        except Exception:
+            file_wrapper = TextIOWrapper(csv_file.file, encoding='latin-1')
+            reader = csv.DictReader(file_wrapper)
+
+        imported = 0
+        errors = 0
+        for row in reader:
+            try:
+                Transaction.objects.create(
+                    user=request.user,
+                    date=row['date'],
+                    description=row['description'],
+                    kind=row['kind'],
+                    amount_pence=int(row['amount_pence'])
+                )
+                imported += 1
+            except Exception as e:
+                errors += 1
+        if errors > 0:
+            messages.error(request, "File not imported", extra_tags="csv_format_help")
+        else:
+            messages.success(request, f"Imported {imported} transactions. {errors} errors.")
+    else:
+        messages.error(request, "No file uploaded or invalid request.", extra_tags="csv_format_help")
+    return redirect('dashboard')
 from datetime import date as date_cls
 
 from django.contrib.auth import login, authenticate
@@ -216,7 +256,9 @@ def dashboard(request):
         "starting_balance_str": pence_to_gbp_input_str(starting_pence),
         "balance_at_date_str": pence_to_gbp_input_str(balance_at_date_pence),
     }
-    #messages.success(request, "You are now logged in.")
+    # Clear sample errors after displaying
+    if 'csv_sample_errors' in request.session:
+        del request.session['csv_sample_errors']
 
     return render(request, "wallet/dashboard.html", context)
 

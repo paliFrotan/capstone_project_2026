@@ -39,7 +39,17 @@
             data-bs-toggle="modal"
             data-bs-target="#resetMonthModal"
         >
-            <i class="bi bi-power"></i>
+            <i class="bi bi-trash"></i>
+        </button>
+        <button
+            id="show-upload"
+            class="btn btn-link p-0 text-primary d-none"
+            title="Upload CSV"
+            style="font-size: 1.4rem"
+            data-bs-toggle="modal"
+            data-bs-target="#uploadModal"
+        >
+            <i class="bi bi-upload"></i>
         </button>
     </div>
 </div>
@@ -100,6 +110,43 @@
             </div>
         </div>
     </div>
+</div>
+
+<!-- Upload CSV Modal -->
+<div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass rounded-4">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="uploadModalLabel">Upload Transactions CSV</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="csv-upload-form" method="post" enctype="multipart/form-data" action="{% url 'import_csv' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="csvFileInput" class="form-label">Select CSV file</label>
+                        <input class="form-control" type="file" id="csvFileInput" name="csv_file" accept=".csv" required />
+                    </div>
+                    <button class="btn btn-ww w-100" type="submit">Upload</button>
+                </form>
+                <div id="csv-help" class="mt-4 d-none">
+                    <div class="alert alert-warning">
+                        <strong>CSV Format Instructions:</strong>
+                        <ol class="mb-1 mt-2">
+                            <li>File must be <b>UTF-8</b> encoded.</li>
+                            <li>Header row required: <code>date,description,kind,amount_pence</code></li>
+                            <li><b>date</b>: YYYY-MM-DD (e.g. 2026-03-14)</li>
+                            <li><b>description</b>: Text description</li>
+                            <li><b>kind</b>: income or expense</li>
+                            <li><b>amount_pence</b>: Integer amount in pence (e.g. 1234 for £12.34)</li>
+                        </ol>
+                        <div>Example row: <code>2026-03-14,Salary,income,123400</code></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </div>
 
 <div class="row g-3">
@@ -317,14 +364,28 @@
 
 {% endblock %} {% block scripts %} {{ block.super }}
 <script>
-    // Show/hide reset button
+    // Show/hide reset and upload buttons
     document
         .getElementById("settings-cog")
         .addEventListener("click", function () {
             document
                 .getElementById("show-reset-confirm")
                 .classList.toggle("d-none");
+            document.getElementById("show-upload").classList.toggle("d-none");
         });
+
+    // Show CSV help in modal if error tag present
+    document.addEventListener("DOMContentLoaded", function () {
+        {% if messages %}
+            {% for message in messages %}
+                {% if 'csv_format_help' in message.tags %}
+                    var uploadModal = new bootstrap.Modal(document.getElementById('uploadModal'));
+                    uploadModal.show();
+                    document.getElementById('csv-help').classList.remove('d-none');
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    });
 
     function showDashboardToast(message, type = "info") {
         // Map toast types to Bootstrap Icons

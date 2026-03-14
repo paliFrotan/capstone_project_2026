@@ -58,5 +58,6 @@ urlpatterns = [
     path("transaction/<int:pk>/edit/", transaction_edit, name="transaction_edit"),
     path("transaction/<int:pk>/delete/", transaction_delete, name="transaction_delete"),
     path('report/<int:year>/<int:month>/', views.print_month_report, name='print_month_report'),
+    path('import-csv/', views.import_csv, name='import_csv'),
 
 ]
