@@ -34,7 +34,7 @@
         </a>
         <a
             class="btn btn-sm btn-outline-light"
-            href="{% url 'dashboard' %}?month={{ month_start|date:'Y-m' }}&date={{ selected_date|default:month_start|date:'Y-m-d' }}"
+            href="{% url 'dashboard' %}?month={{ month_start|date:'Y-m' }}&date={{ selected_date|date:'Y-m-d' }}"
         >
             Back to dashboard
         </a>
