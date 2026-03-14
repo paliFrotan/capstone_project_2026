@@ -12,9 +12,22 @@
         id="month-toast"
         style="z-index: 2000; display: none; margin-bottom: 1rem"
     ></div>
-    <a class="btn btn-sm btn-outline-light" href="{% url 'dashboard' %}">
-        Back to dashboard
-    </a>
+    <div class="d-flex gap-2 align-items-center">
+        <a href="{% url 'print_month_report' year month %}" class="btn btn-outline-secondary" title="Preview Month Report">
+            <i class="bi bi-eye"></i>
+        </a>
+        <a
+            href="{% url 'print_month_report' year month %}"
+            target="_blank"
+            class="btn btn-outline-primary"
+            title="Print Month Report"
+            onclick="window.open(this.href, '_blank').print(); return false;">
+            <i class="bi bi-printer"></i>
+        </a>
+        <a class="btn btn-sm btn-outline-light" href="{% url 'dashboard' %}?month={{ selected_month|date:'Y-m' }}&date={{ selected_date|date:'Y-m-d' }}">
+            Back to dashboard
+        </a>
+    </div>
 </div>
 
 <div class="glass p-3 rounded-4">
@@ -65,15 +78,7 @@
                 {% endfor %}
             </tbody>
         </table>
-        <div>
-            <a
-                href="{% url 'print_month_report' year month %}"
-                target="_blank"
-                class="btn btn-outline-primary"
-            >
-                Print Month Report
-            </a>
-        </div>
+        <!-- Removed old Print Month Report button below table -->
 
         <!-- ⭐ Django Pagination (styled to match your UI) -->
         <div class="d-flex justify-content-center mt-3">

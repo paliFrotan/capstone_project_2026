@@ -11,12 +11,6 @@
             {{ tx.kind }} · {{ tx.date|date:"Y-m-d" }}
         </div>
     </div>
-
-    <a
-        class="btn btn-sm btn-outline-light"
-        href="{% url 'month_transactions' %}?month={{ request.GET.month }}&page={{ request.GET.page }}"
-        >Back</a
-    >
 </div>
 
 <div class="glass p-3 rounded-4" style="max-width: 720px">

@@ -2,12 +2,24 @@
 
 <div class="report-wrapper">
     <div class="report-header">
-        <h1 class="report-title">Monthly Report</h1>
-        <h2 class="report-subtitle">{{ month }}/{{ year }}</h2>
-
-        <button class="ww-btn no-print" onclick="window.print()">
-            Print Report
-        </button>
+        <div
+            style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            "
+        >
+            <div>
+                <h1 class="report-title">Monthly Report</h1>
+                <h2 class="report-subtitle">{{ month }}/{{ year }}</h2>
+            </div>
+            <a
+                href="{% url 'month_transactions' %}?month={{ year }}-{{ month|stringformat:'02d' }}"
+                class="ww-btn no-print"
+                style="margin-left: 2rem"
+                >Back</a
+            >
+        </div>
     </div>
 
     <div class="summary-box glass-panel">
