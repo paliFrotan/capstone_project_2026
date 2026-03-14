@@ -205,7 +205,7 @@
 
             <a
                 class="btn btn-ww w-100"
-                href="{% url 'month_transactions' %}?month={{ selected_month|date:'Y-m' }}"
+                href="{% url 'month_transactions' %}?month={{ selected_month|date:'Y-m' }}&date={{ selected_date|date:'Y-m-d' }}"
             >
                 Month View
             </a>

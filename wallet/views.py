@@ -1,4 +1,3 @@
-
 import csv
 from io import TextIOWrapper
 from django.contrib.auth.decorators import login_required
@@ -38,6 +37,7 @@ def import_csv(request):
     else:
         messages.error(request, "No file uploaded or invalid request.", extra_tags="csv_format_help")
     return redirect('dashboard')
+
 from datetime import date as date_cls
 
 from django.contrib.auth import login, authenticate
@@ -120,10 +120,8 @@ def dashboard(request):
         selected_date = today
 
     # --- Month ALWAYS follows the selected date ---
-    selected_month = month_first_day(selected_date)
+    selected_month = selected_date.replace(day=1)
     month_end = next_month_first_day(selected_month)
-
-    
 
     # --- Forms ---
     starting_balance_form = StartingBalanceForm(
@@ -131,7 +129,6 @@ def dashboard(request):
     )
     income_form = IncomeForm()
     expense_form = ExpenseForm()
-
     # --- POST actions ---
     if request.method == "POST":
         action = request.POST.get("action")
@@ -266,7 +263,9 @@ def dashboard(request):
 
 @login_required
 def month_transactions(request):
+
     month_param = request.GET.get("month")
+    date_param = request.GET.get("date")
     page = int(request.GET.get("page", 1))
 
     if month_param:
@@ -275,6 +274,15 @@ def month_transactions(request):
     else:
         today = date_cls.today()
         month_start = month_first_day(today)
+
+    if date_param:
+        try:
+            yyyy, mm, dd = date_param.split("-")
+            selected_date = date_cls(int(yyyy), int(mm), int(dd))
+        except Exception:
+            selected_date = month_start
+    else:
+        selected_date = month_start
 
     month_end = next_month_first_day(month_start)
 
@@ -307,10 +315,9 @@ def month_transactions(request):
             "page": page_obj.number,    # ⭐ correct page number
             "paginator": paginator,
             "page_obj": page_obj,
-            # ⭐ Add these
             "year": month_start.year,
             "month": month_start.month,
-
+            "selected_date": selected_date,
         },
     )
    

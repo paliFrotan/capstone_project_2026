@@ -34,7 +34,7 @@
         </a>
         <a
             class="btn btn-sm btn-outline-light"
-            href="{% url 'dashboard' %}?month={{ selected_month|date:'Y-m' }}&date={{ selected_date|date:'Y-m-d' }}"
+            href="{% url 'dashboard' %}?month={{ month_start|date:'Y-m' }}&date={{ selected_date|default:month_start|date:'Y-m-d' }}"
         >
             Back to dashboard
         </a>
@@ -43,6 +43,7 @@
 
 <form method="get" class="d-flex gap-2 mb-3 align-items-end">
     <input type="hidden" name="month" value="{{ month_start|date:'Y-m' }}" />
+    <input type="hidden" name="date" value="{{ selected_date|date:'Y-m-d' }}" />
     <div>
         <label for="search_text" class="form-label mb-0 small"
             >Description</label
@@ -129,7 +130,7 @@
                     <li>
                         <a
                             class="pagination-btn pagination-prev"
-                            href="?month={{ month_start|date:'Y-m' }}&page={{ page_obj.previous_page_number }}{% if request.GET.search_text %}&search_text={{ request.GET.search_text }}{% endif %}{% if request.GET.search_day %}&search_day={{ request.GET.search_day }}{% endif %}"
+                            href="?month={{ month_start|date:'Y-m' }}&date={{ selected_date|date:'Y-m-d' }}&page={{ page_obj.previous_page_number }}{% if request.GET.search_text %}&search_text={{ request.GET.search_text }}{% endif %}{% if request.GET.search_day %}&search_day={{ request.GET.search_day }}{% endif %}"
                         >
                             ‹
                         </a>
@@ -145,7 +146,7 @@
                     <li>
                         <a
                             class="pagination-btn"
-                            href="?month={{ month_start|date:'Y-m' }}&page={{ num }}{% if request.GET.search_text %}&search_text={{ request.GET.search_text }}{% endif %}{% if request.GET.search_day %}&search_day={{ request.GET.search_day }}{% endif %}"
+                            href="?month={{ month_start|date:'Y-m' }}&date={{ selected_date|date:'Y-m-d' }}&page={{ num }}{% if request.GET.search_text %}&search_text={{ request.GET.search_text }}{% endif %}{% if request.GET.search_day %}&search_day={{ request.GET.search_day }}{% endif %}"
                         >
                             {{ num }}
                         </a>
@@ -156,7 +157,7 @@
                     <li>
                         <a
                             class="pagination-btn pagination-next"
-                            href="?month={{ month_start|date:'Y-m' }}&page={{ page_obj.next_page_number }}{% if request.GET.search_text %}&search_text={{ request.GET.search_text }}{% endif %}{% if request.GET.search_day %}&search_day={{ request.GET.search_day }}{% endif %}"
+                            href="?month={{ month_start|date:'Y-m' }}&date={{ selected_date|date:'Y-m-d' }}&page={{ page_obj.next_page_number }}{% if request.GET.search_text %}&search_text={{ request.GET.search_text }}{% endif %}{% if request.GET.search_day %}&search_day={{ request.GET.search_day }}{% endif %}"
                         >
                             ›
                         </a>
