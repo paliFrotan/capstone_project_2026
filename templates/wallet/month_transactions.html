@@ -13,7 +13,11 @@
         style="z-index: 2000; display: none; margin-bottom: 1rem"
     ></div>
     <div class="d-flex gap-2 align-items-center">
-        <a href="{% url 'print_month_report' year month %}" class="btn btn-outline-secondary" title="Preview Month Report">
+        <a
+            href="{% url 'print_month_report' year month %}"
+            class="btn btn-outline-secondary"
+            title="Preview Month Report"
+        >
             <i class="bi bi-eye"></i>
         </a>
         <a
@@ -21,15 +25,52 @@
             target="_blank"
             class="btn btn-outline-primary"
             title="Print Month Report"
-            onclick="window.open(this.href, '_blank').print(); return false;">
+            onclick="
+                window.open(this.href, '_blank').print();
+                return false;
+            "
+        >
             <i class="bi bi-printer"></i>
         </a>
-        <a class="btn btn-sm btn-outline-light" href="{% url 'dashboard' %}?month={{ selected_month|date:'Y-m' }}&date={{ selected_date|date:'Y-m-d' }}">
+        <a
+            class="btn btn-sm btn-outline-light"
+            href="{% url 'dashboard' %}?month={{ selected_month|date:'Y-m' }}&date={{ selected_date|date:'Y-m-d' }}"
+        >
             Back to dashboard
         </a>
     </div>
 </div>
 
+<form method="get" class="d-flex gap-2 mb-3 align-items-end">
+    <input type="hidden" name="month" value="{{ month_start|date:'Y-m' }}" />
+    <div>
+        <label for="search_text" class="form-label mb-0 small"
+            >Description</label
+        >
+        <input
+            type="text"
+            id="search_text"
+            name="search_text"
+            class="form-control form-control-sm"
+            value="{{ request.GET.search_text }}"
+        />
+    </div>
+    <div>
+        <label for="search_day" class="form-label mb-0 small"
+            >Day of Month</label
+        >
+        <input
+            type="number"
+            id="search_day"
+            name="search_day"
+            min="1"
+            max="31"
+            class="form-control form-control-sm"
+            value="{{ request.GET.search_day }}"
+        />
+    </div>
+    <button type="submit" class="btn btn-sm btn-outline-light">Search</button>
+</form>
 <div class="glass p-3 rounded-4">
     <div class="table-responsive">
         <table
@@ -88,7 +129,7 @@
                     <li>
                         <a
                             class="pagination-btn pagination-prev"
-                            href="?month={{ month_start|date:'Y-m' }}&page={{ page_obj.previous_page_number }}"
+                            href="?month={{ month_start|date:'Y-m' }}&page={{ page_obj.previous_page_number }}{% if request.GET.search_text %}&search_text={{ request.GET.search_text }}{% endif %}{% if request.GET.search_day %}&search_day={{ request.GET.search_day }}{% endif %}"
                         >
                             ‹
                         </a>
@@ -104,7 +145,7 @@
                     <li>
                         <a
                             class="pagination-btn"
-                            href="?month={{ month_start|date:'Y-m' }}&page={{ num }}"
+                            href="?month={{ month_start|date:'Y-m' }}&page={{ num }}{% if request.GET.search_text %}&search_text={{ request.GET.search_text }}{% endif %}{% if request.GET.search_day %}&search_day={{ request.GET.search_day }}{% endif %}"
                         >
                             {{ num }}
                         </a>
@@ -115,7 +156,7 @@
                     <li>
                         <a
                             class="pagination-btn pagination-next"
-                            href="?month={{ month_start|date:'Y-m' }}&page={{ page_obj.next_page_number }}"
+                            href="?month={{ month_start|date:'Y-m' }}&page={{ page_obj.next_page_number }}{% if request.GET.search_text %}&search_text={{ request.GET.search_text }}{% endif %}{% if request.GET.search_day %}&search_day={{ request.GET.search_day }}{% endif %}"
                         >
                             ›
                         </a>

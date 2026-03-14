@@ -236,11 +236,19 @@ def month_transactions(request):
 
     month_end = next_month_first_day(month_start)
 
+    search_text = request.GET.get("search_text", "")
+    search_day = request.GET.get("search_day", "")
+
     transactions = Transaction.objects.filter(
         user=request.user,
         date__gte=month_start,
         date__lt=month_end,
-    ).order_by("date", "id")
+    )
+    if search_text:
+        transactions = transactions.filter(description__icontains=search_text)
+    if search_day:
+        transactions = transactions.filter(date__day=search_day)
+    transactions = transactions.order_by("date", "id")
     from django.core.paginator import Paginator
 
 
