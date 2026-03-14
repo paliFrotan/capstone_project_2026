@@ -1,18 +1,6 @@
 from datetime import date as date_cls
-
 from django import forms
-
-
-def gbp_str_to_pence(value: str) -> int:
-    value = (value or "").strip().replace("£", "")
-    if value == "":
-        return 0
-    # basic safe parse to pennies
-    pounds, dot, pennies = value.partition(".")
-    pounds_i = int(pounds) if pounds else 0
-    pennies = (pennies + "00")[:2]
-    pennies_i = int(pennies)
-    return pounds_i * 100 + pennies_i
+from .utils import parse_amount   # or wherever you placed it
 
 
 class StartingBalanceForm(forms.Form):
@@ -28,7 +16,11 @@ class StartingBalanceForm(forms.Form):
         return date_cls(m.year, m.month, 1)
 
     def clean_amount_gbp(self):
-        return gbp_str_to_pence(self.cleaned_data["amount_gbp"])
+        value = self.cleaned_data.get("amount_gbp")
+        amount = parse_amount(value)
+        if amount is None:
+            raise forms.ValidationError("Amount must be a valid number.")
+        return amount
 
 
 class IncomeForm(forms.Form):
@@ -37,7 +29,11 @@ class IncomeForm(forms.Form):
     amount_gbp = forms.CharField()
 
     def clean_amount_gbp(self):
-        return gbp_str_to_pence(self.cleaned_data["amount_gbp"])
+        value = self.cleaned_data.get("amount_gbp")
+        amount = parse_amount(value)
+        if amount is None:
+            raise forms.ValidationError("Amount must be a valid number.")
+        return amount
 
 
 class ExpenseForm(IncomeForm):

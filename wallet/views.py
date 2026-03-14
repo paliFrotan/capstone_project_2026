@@ -13,28 +13,8 @@ from django.http import HttpResponseRedirect
 from .forms import ExpenseForm, IncomeForm, StartingBalanceForm
 from .models import StartingBalance, Transaction
 
-from decimal import Decimal, InvalidOperation
 
-def parse_amount(value):
-    try:
-        # Accept integer-like strings as pounds (e.g., '34' -> 3400 pence)
-        if value is not None and isinstance(value, str):
-            value = value.strip()
-            if value.isdigit():
-                return int(value) * 100
-            if value.count('.') == 1 and value.replace('.', '').isdigit():
-                # Accepts '34.56' as 3456 pence
-                pounds, pence = value.split('.')
-                if len(pence) == 1:
-                    pence += '0'  # '34.5' -> '34.50'
-                elif len(pence) > 2:
-                    pence = pence[:2]  # Truncate extra decimals
-                return int(pounds) * 100 + int(pence)
-        # Fallback to Decimal for other cases
-        dec = Decimal(value)
-        return int(dec * 100)
-    except (InvalidOperation, TypeError, ValueError):
-        return None
+from .utils import parse_amount
 
 
 def landing(request):
@@ -287,30 +267,35 @@ def month_transactions(request):
 @login_required
 def transaction_edit(request, pk: int):
     tx = get_object_or_404(Transaction, pk=pk, user=request.user)
-    
 
     FormClass = IncomeForm if tx.kind == Transaction.INCOME else ExpenseForm
 
     if request.method == "POST":
+
+        # Cancel button
         if "cancel" in request.POST:
-            from django.contrib import messages
             messages.info(request, "Edit cancelled.")
             month = request.GET.get("month")
             page = request.GET.get("page", 1)
             url = reverse("month_transactions") + f"?month={month}&page={page}"
             return HttpResponseRedirect(url)
+
         form = FormClass(request.POST)
+
         if form.is_valid():
+            amount = form.cleaned_data["amount_gbp"]  # already pence
+
             tx.date = form.cleaned_data["date"]
             tx.description = form.cleaned_data["description"]
-            tx.amount_pence = form.cleaned_data["amount_gbp"]
+            tx.amount_pence = amount
             tx.save()
-            from django.contrib import messages
+
             messages.success(request, "Transaction updated successfully.")
             month = request.GET.get("month")
             page = request.GET.get("page", 1)
             url = reverse("month_transactions") + f"?month={month}&page={page}"
             return HttpResponseRedirect(url)
+
     else:
         form = FormClass(
             initial={
@@ -333,14 +318,28 @@ def transaction_delete(request, pk: int):
     """
     tx = get_object_or_404(Transaction, pk=pk, user=request.user)
 
+    # Get month and page from query params
+    month = request.GET.get("month")
+    page = request.GET.get("page")
+    query = ""
+    if month:
+        query += f"?month={month}"
+        if page:
+            query += f"&page={page}"
+    
     if request.method == "POST":
         from django.contrib import messages
         if "cancel" in request.POST:
             messages.info(request, "Delete cancelled.")
-            return redirect("month_transactions")
+            url = reverse("month_transactions") + f"?month={month}&page={page}"
+            return HttpResponseRedirect(url)
+
+           # return redirect(f"/month_transactions{query}")
         tx.delete()
         messages.success(request, "Transaction deleted successfully.")
-        return redirect("month_transactions")
+        url = reverse("month_transactions") + f"?month={month}&page={page}"
+        return HttpResponseRedirect(url)
+
 
     return render(
         request,
