@@ -14,14 +14,14 @@
     ></div>
     <div class="d-flex gap-2 align-items-center">
         <a
-            href="{% url 'print_month_report' year month %}"
+            href="{% url 'print_month_report' year month %}?search_text={{ request.GET.search_text }}&search_day={{ request.GET.search_day }}"
             class="btn btn-outline-secondary"
             title="Preview Month Report"
         >
             <i class="bi bi-eye"></i>
         </a>
         <a
-            href="{% url 'print_month_report' year month %}"
+            href="{% url 'print_month_report' year month %}?search_text={{ request.GET.search_text }}&search_day={{ request.GET.search_day }}"
             target="_blank"
             class="btn btn-outline-primary"
             title="Print Month Report"

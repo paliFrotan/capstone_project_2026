@@ -361,7 +361,16 @@ def print_month_report(request, year, month):
     transactions = Transaction.objects.filter(
         date__year=year,
         date__month=month
-    ).order_by('date')
+    )
+    search_text = request.GET.get("search_text", "")
+    search_day = request.GET.get("search_day", "")
+
+    if search_text:
+        transactions = transactions.filter(description__icontains=search_text)
+    if search_day:
+        transactions = transactions.filter(date__day=search_day)
+
+    transactions = transactions.order_by('date')
 
     income_pence = sum(t.amount_pence for t in transactions if t.kind == Transaction.INCOME)
     expenses_pence = sum(t.amount_pence for t in transactions if t.kind == Transaction.EXPENSE)

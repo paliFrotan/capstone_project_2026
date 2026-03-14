@@ -23,18 +23,7 @@
     </div>
 
     <div class="summary-box glass-panel">
-        <div class="summary-item">
-            <span class="label">Total Income</span>
-            <span class="value income">£{{ income }}</span>
-        </div>
-        <div class="summary-item">
-            <span class="label">Total Expenses</span>
-            <span class="value expense">£{{ expenses }}</span>
-        </div>
-        <div class="summary-item">
-            <span class="label">Balance</span>
-            <span class="value balance">£{{ balance }}</span>
-        </div>
+        <h3 class="mb-0">Searched items found: {{ transactions|length }}</h3>
     </div>
 
     <table class="report-table glass-panel">
