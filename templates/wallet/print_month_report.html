@@ -31,7 +31,7 @@
             <tr>
                 <th>Date</th>
                 <th>Description</th>
-                <th>Kind</th>
+                <th>Type</th>
                 <th class="amount">Amount</th>
             </tr>
         </thead>
@@ -40,8 +40,10 @@
             <tr>
                 <td>{{ t.date|date:"Y-m-d" }}</td>
                 <td>{{ t.description }}</td>
-                <td class="kind {{ t.kind }}">{{ t.kind }}</td>
-                <td class="amount {{ t.kind }}">{{ t.signed_amount_str }}</td>
+                <td class="type {{ t.type }}">
+                    {{ t.type }}{% if t.type == 'expense' %} ✔️{% endif %}
+                </td>
+                <td class="amount {{ t.type }}">{{ t.signed_amount_str }}</td>
             </tr>
             {% empty %}
             <tr>

@@ -82,7 +82,7 @@
                 <tr>
                     <th>Date</th>
                     <th>Description</th>
-                    <th>Kind</th>
+                    <th>Type</th>
                     <th class="text-end">Amount</th>
                     <th class="text-end">Actions</th>
                 </tr>
@@ -93,19 +93,19 @@
                 <tr>
                     <td>{{ t.date|date:"Y-m-d" }}</td>
                     <td>{{ t.description }}</td>
-                    <td>{{ t.kind }}</td>
+                    <td>{{ t.type }}</td>
                     <td class="text-end">{{ t.signed_amount_str }}</td>
                     <td class="text-end">
                         <a
                             class="btn btn-sm btn-outline-light"
-                            href="{% url 'transaction_edit' t.id %}?month={{ month_start|date:'Y-m' }}&page={{ page_obj.number }}"
+                            href="{% url 'transaction_edit' t.id %}?month={{ month_start|date:'Y-m' }}&date={{ selected_date|date:'Y-m-d' }}&page={{ page_obj.number }}"
                         >
                             Edit
                         </a>
 
                         <a
                             class="btn btn-sm btn-outline-danger"
-                            href="{% url 'transaction_delete' t.id %}?month={{ month_start|date:'Y-m' }}&page={{ page_obj.number }}"
+                            href="{% url 'transaction_delete' t.id %}?month={{ month_start|date:'Y-m' }}&date={{ selected_date|date:'Y-m-d' }}&page={{ page_obj.number }}"
                         >
                             Delete
                         </a>

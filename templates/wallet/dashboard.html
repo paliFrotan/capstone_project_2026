@@ -134,10 +134,10 @@
                         <strong>CSV Format Instructions:</strong>
                         <ol class="mb-1 mt-2">
                             <li>File must be <b>UTF-8</b> encoded.</li>
-                            <li>Header row required: <code>date,description,kind,amount_pence</code></li>
+                            <li>Header row required: <code>date,description,type,amount_pence</code></li>
                             <li><b>date</b>: YYYY-MM-DD (e.g. 2026-03-14)</li>
                             <li><b>description</b>: Text description</li>
-                            <li><b>kind</b>: income or expense</li>
+                            <li><b>type</b>: income or expense</li>
                             <li><b>amount_pence</b>: Integer amount in pence (e.g. 1234 for £12.34)</li>
                         </ol>
                         <div>Example row: <code>2026-03-14,Salary,income,123400</code></div>
@@ -312,10 +312,11 @@
                             name="amount_gbp"
                             placeholder="0.00"
                         />
-
+                        
                         <button class="btn btn-ww w-100" type="submit">
                             Add expense
                         </button>
+                        
                     </form>
                 </div>
             </div>
@@ -333,7 +334,7 @@
                         <tr>
                             <th>Date</th>
                             <th>Description</th>
-                            <th>Kind</th>
+                            <th>Type</th>
                             <th class="text-end">Amount</th>
                         </tr>
                     </thead>
@@ -342,7 +343,7 @@
                         <tr>
                             <td>{{ t.date|date:"Y-m-d" }}</td>
                             <td>{{ t.description }}</td>
-                            <td>{{ t.kind }}</td>
+                            <td>{{ t.type }}</td>
                             <td class="text-end">{{ t.amount_str }}</td>
                         </tr>
                         {% empty %}

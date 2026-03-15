@@ -24,7 +24,7 @@ def import_csv(request):
                     user=request.user,
                     date=row['date'],
                     description=row['description'],
-                    kind=row['kind'],
+                    type=row['type'],
                     amount_pence=int(row['amount_pence'])
                 )
                 imported += 1
@@ -167,7 +167,7 @@ def dashboard(request):
                 user=request.user,
                 date=request.POST.get("date"),
                 description=request.POST.get("description"),
-                kind=Transaction.INCOME,
+                type=Transaction.INCOME,
                 amount_pence=amount,
             )
             messages.success(request, "Income added")
@@ -187,8 +187,9 @@ def dashboard(request):
                 user=request.user,
                 date=request.POST.get("date"),
                 description=request.POST.get("description"),
-                kind=Transaction.EXPENSE,
+                type=Transaction.EXPENSE,
                 amount_pence=amount,
+                is_dd=request.POST.get("is_dd") == "on",
             )
             messages.success(request, "Expense added")
             return redirect(
@@ -226,8 +227,8 @@ def dashboard(request):
     starting_balance = StartingBalance.objects.filter(
         user=request.user, month=selected_month
     ).first()
+    #starting_pence = starting_balance.amount_pence if starting_balance else 0
     starting_pence = starting_balance.amount_pence if starting_balance else 0
-
     # --- Show ALL transactions for the month ---
     transactions = Transaction.objects.filter(
         user=request.user,
@@ -325,7 +326,7 @@ def month_transactions(request):
 def transaction_edit(request, pk: int):
     tx = get_object_or_404(Transaction, pk=pk, user=request.user)
 
-    FormClass = IncomeForm if tx.kind == Transaction.INCOME else ExpenseForm
+    FormClass = IncomeForm if tx.type == Transaction.INCOME else ExpenseForm
 
     if request.method == "POST":
 
@@ -421,8 +422,8 @@ def print_month_report(request, year, month):
 
     transactions = transactions.order_by('date')
 
-    income_pence = sum(t.amount_pence for t in transactions if t.kind == Transaction.INCOME)
-    expenses_pence = sum(t.amount_pence for t in transactions if t.kind == Transaction.EXPENSE)
+    income_pence = sum(t.amount_pence for t in transactions if t.type == Transaction.INCOME)
+    expenses_pence = sum(t.amount_pence for t in transactions if t.type == Transaction.EXPENSE)
     balance_pence = income_pence - expenses_pence
 
     context = {

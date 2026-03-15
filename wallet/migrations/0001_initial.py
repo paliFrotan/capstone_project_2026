@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('date', models.DateField()),
                 ('description', models.CharField(max_length=140)),
-                ('kind', models.CharField(choices=[('income', 'Income'), ('expense', 'Expense')], max_length=10)),
+                ('type', models.CharField(choices=[('income', 'Income'), ('expense', 'Expense')], max_length=10)),
                 ('amount_pence', models.IntegerField(help_text='Positive integer pennies')),
                 ('created_at', models.DateTimeField(default=django.utils.timezone.now)),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
