@@ -3,7 +3,17 @@ from io import TextIOWrapper
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
-from django.shortcuts import redirect
+from datetime import date as date_cls
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import redirect, render, get_object_or_404
+from django.utils.timezone import datetime
+from django.urls import reverse
+from django.http import HttpResponseRedirect
+from .forms import ExpenseForm, IncomeForm, StartingBalanceForm
+from .models import StartingBalance, Transaction
+from .utils import parse_amount
+
 
 @login_required
 def import_csv(request):
@@ -38,23 +48,6 @@ def import_csv(request):
         messages.error(request, "No file uploaded or invalid request.", extra_tags="csv_format_help")
     return redirect('dashboard')
 
-from datetime import date as date_cls
-
-from django.contrib.auth import login, authenticate
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import redirect, render, get_object_or_404
-from django.utils.timezone import datetime
-from django.urls import reverse
-from django.http import HttpResponseRedirect
-
-
-from .forms import ExpenseForm, IncomeForm, StartingBalanceForm
-from .models import StartingBalance, Transaction
-
-
-from .utils import parse_amount
 
 
 def landing(request):
@@ -268,6 +261,7 @@ def month_transactions(request):
     month_param = request.GET.get("month")
     date_param = request.GET.get("date")
     page = int(request.GET.get("page", 1))
+    save_date = date_param
 
     if month_param:
         yyyy, mm = month_param.split("-")
@@ -301,33 +295,46 @@ def month_transactions(request):
         transactions = transactions.filter(date__day=search_day)
     transactions = transactions.order_by("date", "id")
     from django.core.paginator import Paginator
-
+    
 
     # ⭐ Add pagination
     paginator = Paginator(transactions, 3)   # or whatever number per page
     page_obj = paginator.get_page(page)
+
+    # ⭐ Block pagination logic (5 pages per block)
+    block_size = 5
+    current_block = (page_obj.number - 1) // block_size
+    start = current_block * block_size + 1
+    end = min(start + block_size - 1, paginator.num_pages)
 
     return render(
         request,
         "wallet/month_transactions.html",
         {
             "month_start": month_start,
-            "transactions": page_obj,   # ⭐ use page_obj
-            "page": page_obj.number,    # ⭐ correct page number
+            "transactions": page_obj,
+            "page": page_obj.number,
             "paginator": paginator,
             "page_obj": page_obj,
             "year": month_start.year,
             "month": month_start.month,
             "selected_date": selected_date,
+            "start": start,           # <-- add this
+            "end": end,               # <-- add this
+            "total_pages": paginator.num_pages,  # <-- add this if you want
+            "save_date": save_date,
         },
     )
    
 @login_required
 def transaction_edit(request, pk: int):
+    
+
     tx = get_object_or_404(Transaction, pk=pk, user=request.user)
-
+     
     FormClass = IncomeForm if tx.type == Transaction.INCOME else ExpenseForm
-
+    date_param = request.GET.get("date") or request.POST.get("date")
+    selected_date = date_param
     if request.method == "POST":
 
         # Cancel button
@@ -335,7 +342,7 @@ def transaction_edit(request, pk: int):
             messages.info(request, "Edit cancelled.")
             month = request.GET.get("month")
             page = request.GET.get("page", 1)
-            url = reverse("month_transactions") + f"?month={month}&page={page}"
+            url = reverse("month_transactions") + f"?month={month}&date={selected_date}&page={page}"
             return HttpResponseRedirect(url)
 
         form = FormClass(request.POST)
@@ -351,7 +358,7 @@ def transaction_edit(request, pk: int):
             messages.success(request, "Transaction updated successfully.")
             month = request.GET.get("month")
             page = request.GET.get("page", 1)
-            url = reverse("month_transactions") + f"?month={month}&page={page}"
+            url = reverse("month_transactions") + f"?month={month}&date={selected_date}&page={page}"
             return HttpResponseRedirect(url)
 
     else:
@@ -379,6 +386,8 @@ def transaction_delete(request, pk: int):
     # Get month and page from query params
     month = request.GET.get("month")
     page = request.GET.get("page")
+    date_param = request.GET.get("date") or request.POST.get("date")
+    selected_date = date_param
     query = ""
     if month:
         query += f"?month={month}"
@@ -389,13 +398,13 @@ def transaction_delete(request, pk: int):
         from django.contrib import messages
         if "cancel" in request.POST:
             messages.info(request, "Delete cancelled.")
-            url = reverse("month_transactions") + f"?month={month}&page={page}"
+            url = reverse("month_transactions") + f"?month={month}&date={selected_date}&page={page}"
             return HttpResponseRedirect(url)
 
            # return redirect(f"/month_transactions{query}")
         tx.delete()
         messages.success(request, "Transaction deleted successfully.")
-        url = reverse("month_transactions") + f"?month={month}&page={page}"
+        url = reverse("month_transactions") + f"?month={month}&date={selected_date}&page={page}"
         return HttpResponseRedirect(url)
 
 
@@ -409,6 +418,7 @@ def transaction_delete(request, pk: int):
 def print_month_report(request, year, month):
     # Get all transactions for the month
     transactions = Transaction.objects.filter(
+        user=request.user,
         date__year=year,
         date__month=month
     )
@@ -425,7 +435,9 @@ def print_month_report(request, year, month):
     income_pence = sum(t.amount_pence for t in transactions if t.type == Transaction.INCOME)
     expenses_pence = sum(t.amount_pence for t in transactions if t.type == Transaction.EXPENSE)
     balance_pence = income_pence - expenses_pence
-
+   
+    show_summary = not search_text and not search_day
+    
     context = {
         'year': year,
         'month': month,
@@ -433,8 +445,7 @@ def print_month_report(request, year, month):
         'income': income_pence / 100,
         'expenses': expenses_pence / 100,
         'balance': balance_pence / 100,
+        'show_summary': show_summary,
     }
 
     return render(request, 'wallet/print_month_report.html', context)
-
-

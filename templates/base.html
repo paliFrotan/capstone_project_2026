@@ -45,28 +45,6 @@
 
         <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
         {% block head %}{% endblock %}
-        <script>
-            function showToast(message, type = "info") {
-                const container = document.getElementById("toast-container");
-
-                const toast = document.createElement("div");
-                toast.className = `toast toast-${type}`;
-                toast.innerText = message;
-
-                container.appendChild(toast);
-
-                setTimeout(() => {
-                    toast.remove();
-                }, 4000);
-            }
-        </script>
-        {% if messages %}
-        <script>
-            {% for message in messages %}
-                showToast("{{ message|escapejs }}", "{{ message.tags }}");
-            {% endfor %}
-        </script>
-        {% endif %}
     </head>
 
     <body>
@@ -131,7 +109,6 @@
             crossorigin="anonymous"
         ></script>
         <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
-        <script src="{% static 'js/script.js' %}"></script>
         {% block scripts %} {% endblock %}
     </body>
 </html>

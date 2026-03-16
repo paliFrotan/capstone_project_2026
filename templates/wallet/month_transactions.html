@@ -1,6 +1,8 @@
 <!-- prettier-ignore -->
+
 {% extends "base.html" %} {% block title %}WiseWallet - Current Month
 {% endblock %} 
+{% load static %}
 {% block content %}
 
 <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
@@ -8,9 +10,11 @@
         <h1 class="h3 mb-1">Current month</h1>
         <div class="text-white-50">Month: {{ month_start|date:"Y-m" }}</div>
     </div>
+    
     <div
         id="month-toast"
-        style="z-index: 2000; display: none; margin-bottom: 1rem"
+        class="position-absolute start-50 translate-middle-x"
+        style="top: 6.0rem; z-index: 1056; display: none"
     ></div>
     <div class="d-flex gap-2 align-items-center">
         <a
@@ -38,6 +42,7 @@
         >
             Back to dashboard
         </a>
+        
     </div>
 </div>
 
@@ -123,100 +128,61 @@
         <!-- Removed old Print Month Report button below table -->
 
         <!-- ⭐ Django Pagination (styled to match your UI) -->
+        <!-- prettier-ignore -->
         <div class="d-flex justify-content-center mt-3">
-            <nav>
-                <ul class="pagination">
-                    {% if page_obj.has_previous %}
-                    <li>
-                        <a
-                            class="pagination-btn pagination-prev"
-                            href="?month={{ month_start|date:'Y-m' }}&date={{ selected_date|date:'Y-m-d' }}&page={{ page_obj.previous_page_number }}{% if request.GET.search_text %}&search_text={{ request.GET.search_text }}{% endif %}{% if request.GET.search_day %}&search_day={{ request.GET.search_day }}{% endif %}"
-                        >
-                            ‹
-                        </a>
-                    </li>
-                    {% endif %}
-                    <!-- prettier-ignore -->
-                    {% for num in paginator.page_range %} 
+        <nav>
+            <ul class="pagination">
+            {% if start > 1 %}
+            <li>
+                <a class="pagination-btn pagination-prev"
+                href="?month={{ month_start|date:'Y-m' }}&date={{ selected_date|date:'Y-m-d' }}&page={{ start|add:"-1" }}{% if request.GET.search_text %}&search_text={{ request.GET.search_text }}{% endif %}{% if request.GET.search_day %}&search_day={{ request.GET.search_day }}{% endif %}">
+                    ‹
+                </a>
+            </li>
+            {% endif %}
+            {% for num in paginator.page_range %}
+                {% if num >= start and num <= end %}
                     {% if num == page_obj.number %}
-                    <li>
-                        <span class="pagination-btn active"> {{ num }} </span>
-                    </li>
+                        <li>
+                            <span class="pagination-btn active"> {{ num }} </span>
+                        </li>
                     {% else %}
-                    <li>
-                        <a
-                            class="pagination-btn"
-                            href="?month={{ month_start|date:'Y-m' }}&date={{ selected_date|date:'Y-m-d' }}&page={{ num }}{% if request.GET.search_text %}&search_text={{ request.GET.search_text }}{% endif %}{% if request.GET.search_day %}&search_day={{ request.GET.search_day }}{% endif %}"
-                        >
-                            {{ num }}
-                        </a>
-                    </li>
-                    {% endif %} {% endfor %}
-                    <!-- prettier-ignore -->
-                    {% if page_obj.has_next %}
-                    <li>
-                        <a
-                            class="pagination-btn pagination-next"
-                            href="?month={{ month_start|date:'Y-m' }}&date={{ selected_date|date:'Y-m-d' }}&page={{ page_obj.next_page_number }}{% if request.GET.search_text %}&search_text={{ request.GET.search_text }}{% endif %}{% if request.GET.search_day %}&search_day={{ request.GET.search_day }}{% endif %}"
-                        >
-                            ›
-                        </a>
-                    </li>
+                        <li>
+                            <a class="pagination-btn"
+                            href="?month={{ month_start|date:'Y-m' }}&date={{ selected_date|date:'Y-m-d' }}&page={{ num }}{% if request.GET.search_text %}&search_text={{ request.GET.search_text }}{% endif %}{% if request.GET.search_day %}&search_day={{ request.GET.search_day }}{% endif %}">
+                                {{ num }}
+                            </a>
+                        </li>
                     {% endif %}
-                </ul>
-            </nav>
-        </div>
-
-        {% endblock %}
-    </div>
-</div>
-
-{% block scripts %} {{ block.super }}
-<script>
-        function showMonthToast(message, type = "info") {
-        const icons = {
-            success: "bi-check-circle-fill",
-            warning: "bi-exclamation-triangle-fill",
-            info: "bi-info-circle-fill",
-            error: "bi-x-circle-fill"
-        };
-
-        const toastDiv = document.getElementById("month-toast");
-
-        toastDiv.innerHTML = `
-            <div class="ww-toast alert-${type} d-flex align-items-center gap-2 mb-0 py-2 px-3 rounded-3 shadow">
-                <i class="bi ${icons[type] || icons.info} toast-icon"></i>
-                <span>${message}</span>
-            </div>
-        `;
-
-        toastDiv.style.display = "block";
-        toastDiv.style.opacity = "1";
-        toastDiv.style.transition = "opacity 0.5s";
-
-        setTimeout(() => {
-            toastDiv.style.opacity = "1";
-        }, 10);
-
-        setTimeout(() => {
-            toastDiv.style.opacity = "0";
-            setTimeout(() => {
-                toastDiv.style.display = "none";
-                toastDiv.innerHTML = "";
-                toastDiv.style.opacity = "1";
-            }, 500);
-        }, 3000);
-    }
-        {% if messages %}
-            {% for message in messages %}
-                {% if "cancel" in message|lower %}
-                showMonthToast("{{ message|escapejs }}", "info");
-                {% elif "delete" in message|lower %}
-                showMonthToast("{{ message|escapejs }}", "danger");
-                {% else %}
-                showMonthToast("{{ message|escapejs }}", "success");
                 {% endif %}
             {% endfor %}
-        {% endif %}
+            {% if end < total_pages %}
+            <li>
+                <a class="pagination-btn pagination-next"
+                href="?month={{ month_start|date:'Y-m' }}&date={{ selected_date|date:'Y-m-d' }}&page={{ end|add:"1" }}{% if request.GET.search_text %}&search_text={{ request.GET.search_text }}{% endif %}{% if request.GET.search_day %}&search_day={{ request.GET.search_day }}{% endif %}">
+                    ›
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+        {# closes .glass p-3 rounded-4 #}
+    </div>
+    {# closes .table-responsive or main content div #}
+</div>
+
+<!-- prettier-ignore -->
+{% endblock %}
+    {% block scripts %} {{ block.super }} {% if messages %}
+<script>
+    window.monthToasts = [
+        {% for message in messages %}
+            {
+                text: "{{ message|escapejs }}",
+                type: "{% if 'cancel' in message|lower %}info{% elif 'delete' in message|lower %}danger{% else %}success{% endif %}"
+            },
+        {% endfor %}
+    ];
 </script>
+{% endif %} 
+<script src="{% static 'js/script.js' %}"></script>
 {% endblock %}

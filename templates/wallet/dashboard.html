@@ -53,11 +53,7 @@
         </button>
     </div>
 </div>
-<div
-    id="dashboard-toast"
-    class="position-fixed top-0 start-50 translate-middle-x"
-    style="z-index: 2000; display: none; margin-top: 1rem"
-></div>
+
 <!-- Reset Month Bootstrap Modal -->
 <div
     class="modal fade"
@@ -362,71 +358,32 @@
         </div>
     </div>
 </div>
+{% endblock %}
 
-{% endblock %} {% block scripts %} {{ block.super }}
-<script>
-    // Show/hide reset and upload buttons
-    document
-        .getElementById("settings-cog")
-        .addEventListener("click", function () {
-            document
-                .getElementById("show-reset-confirm")
-                .classList.toggle("d-none");
-            document.getElementById("show-upload").classList.toggle("d-none");
-        });
-
-    // Show CSV help in modal if error tag present
-    document.addEventListener("DOMContentLoaded", function () {
-        {% if messages %}
-            {% for message in messages %}
-                {% if 'csv_format_help' in message.tags %}
-                    var uploadModal = new bootstrap.Modal(document.getElementById('uploadModal'));
-                    uploadModal.show();
-                    document.getElementById('csv-help').classList.remove('d-none');
-                {% endif %}
-            {% endfor %}
-        {% endif %}
-    });
-
-    function showDashboardToast(message, type = "info") {
-        // Map toast types to Bootstrap Icons
-        const icons = {
-            success: "bi-check-circle-fill",
-            warning: "bi-exclamation-triangle-fill",
-            info: "bi-info-circle-fill",
-            error: "bi-x-circle-fill",
-            danger: "bi-x-circle-fill",
-        };
-        const toastDiv = document.getElementById("dashboard-toast");
-        toastDiv.innerHTML = `
-            <div class="alert alert-${type} d-flex align-items-center gap-2 mb-0 py-2 px-3 rounded-3 shadow">
-                <i class="bi ${icons[type] || icons.info} toast-icon"></i>
-                <span>${message}</span>
-            </div>
-        `;
-        toastDiv.style.display = "block";
-        toastDiv.style.opacity = "1";
-        toastDiv.style.transition = "opacity 0.5s";
-        setTimeout(() => {
-            toastDiv.style.opacity = "1";
-        }, 10);
-        setTimeout(() => {
-            toastDiv.style.opacity = "0";
-            setTimeout(() => {
-                toastDiv.style.display = "none";
-                toastDiv.innerHTML = "";
-                toastDiv.style.opacity = "1";
-            }, 500);
-        }, 3000);
-    }
-</script>
-{% if messages %}
-<script>
+<!-- prettier-ignore -->
+{% block scripts %} {{ block.super }}
+{% load static %}
+{% with show_csv_help=False %}
     {% for message in messages %}
-        showDashboardToast(
-            "{{ message|escapejs }}",
-            "{{ message.tags|default:'info' }}"
-        );
+        {% if 'csv_format_help' in message.tags %}
+            {% with show_csv_help=True %}
+            {% endwith %}
+        {% endif %}
     {% endfor %}
+    <script>
+        window.dashboardMessages = [
+            {% for message in messages %}
+                {text: "{{ message|escapejs }}", type: "{{ message.tags|default:'info' }}"},
+            {% endfor %}
+        ];
+        window.showCsvHelp = {{ show_csv_help|yesno:"true,false" }};
+    </script>
+{% endwith %}
+{% if not messages %}
+<script>
+    window.dashboardMessages = [];
+    window.showCsvHelp = false;
 </script>
-{% endif %} {% endblock %}
+{% endif %}
+<script src="{% static 'js/script.js' %}"></script>
+{% endblock %}

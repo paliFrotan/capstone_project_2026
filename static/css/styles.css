@@ -585,3 +585,26 @@ body {
 .alert-danger .toast-icon {
     color: #f87171;
 } /* red */
+.a4-page {
+    width: 794px;
+    min-height: 1123px;
+    margin: 2rem auto;
+    background: white;
+    box-shadow: 0 0 16px rgba(0, 0, 0, 0.15);
+    padding: 2rem 2.5rem;
+    border-radius: 12px;
+    position: relative;
+}
+@media print {
+    .a4-page {
+        width: 210mm;
+        min-height: 297mm;
+        margin: 0;
+        box-shadow: none;
+        border-radius: 0;
+        page-break-after: always;
+    }
+    body {
+        background: white !important;
+    }
+}
