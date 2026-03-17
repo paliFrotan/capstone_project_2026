@@ -3,12 +3,31 @@ flatpickr("#date-picker", {
     monthSelectorType: "dropdown",
     yearSelectorType: "input",
     allowInput: true,
-    onchange: function (selectedDates, dateStr, instance) {
-        instance.input.form.submit();
-    },
+    // Remove the onchange handler!
 });
 
 document.addEventListener("DOMContentLoaded", function () {
+    // Wait for Flatpickr to render
+    const fp = document.querySelector("#date-picker")._flatpickr;
+
+    // Listen for change events on the month dropdown
+    document.body.addEventListener("change", function (e) {
+        if (e.target.classList.contains("flatpickr-monthDropdown-months")) {
+            var select = e.target;
+            var newMonth = select.selectedIndex;
+            // Get the current selected date or today
+            let date = fp.selectedDates[0] || new Date();
+            // Set the new month, keep the day and year
+            let newDate = new Date(date);
+            newDate.setMonth(newMonth);
+            // If the day is invalid for the new month (e.g., 31 in Feb), set to last day of month
+            if (newDate.getMonth() !== newMonth) {
+                newDate.setDate(0);
+            }
+            // Update Flatpickr and input field
+            fp.setDate(newDate, true);
+        }
+    });
     // --- Month transactions pagination ---
     // --- Dashboard-specific JS ---
 

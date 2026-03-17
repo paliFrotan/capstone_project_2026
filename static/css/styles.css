@@ -163,7 +163,11 @@ body {
     fill: var(--ww-pink) !important;
     opacity: 1;
 }
-
+/* Hide Flatpickr's default SVG arrows in the month/year input */
+.flatpickr-current-month .numInputWrapper .arrowUp svg,
+.flatpickr-current-month .numInputWrapper .arrowDown svg {
+    display: none !important;
+}
 /* Weekday headings */
 .flatpickr-weekday {
     color: var(--ww-text) !important;
@@ -607,4 +611,166 @@ body {
     body {
         background: white !important;
     }
+}
+/* A4 layout */
+
+.a4-size {
+    width: 210mm;
+    padding: 10mm 12mm;
+    box-sizing: border-box;
+}
+
+/* Compact glass panels */
+.glass-panel {
+    padding: 0.75rem !important;
+    border-radius: 10px;
+}
+
+/* Reduce spacing between sections */
+.report-wrapper > * {
+    margin-bottom: 0.75rem;
+}
+
+/* Header */
+.report-title {
+    font-size: 1.25rem; /* h5 size */
+    margin-bottom: 0;
+    font-weight: 600;
+}
+
+/* Summary box */
+.summary-box {
+    font-size: 0.9rem;
+    line-height: 1.3;
+}
+
+/* Table styling */
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+}
+
+.report-table th,
+.report-table td {
+    padding: 4px 6px !important;
+}
+
+.report-table th {
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.report-table .amount {
+    text-align: right;
+}
+
+/* Income/expense colours */
+.report-table .income {
+    color: #4caf50;
+    font-weight: 600;
+}
+
+.report-table .expense {
+    color: #ff5252;
+    font-weight: 600;
+}
+
+/* Empty row */
+.empty-row {
+    text-align: center;
+    padding: 1rem !important;
+    font-style: italic;
+    color: #ccc;
+}
+.report-wrapper > *:last-child {
+    margin-bottom: 0 !important;
+}
+
+/* Print mode */
+@media print {
+    .a4-size {
+        min-height: 297mm;
+    }
+    .no-print {
+        display: none !important;
+    }
+    .glass-panel {
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+    body {
+        margin: 0;
+        padding: 0;
+    }
+}
+/************************testing***************/
+/* Make the month/year arrows minimal */
+/* Remove default ugly arrow shapes */
+/* Completely remove Flatpickr's default triangle arrows */
+.flatpickr-current-month .numInputWrapper .arrowUp:after,
+.flatpickr-current-month .numInputWrapper .arrowDown:after {
+    border: none !important; /* removes triangle shape */
+    border-left: none !important;
+    border-right: none !important;
+    border-top: none !important;
+    border-bottom: none !important;
+}
+.flatpickr-current-month .numInputWrapper .arrowUp:after,
+.flatpickr-current-month .numInputWrapper .arrowDown:after {
+    border: none !important;
+}
+
+/* Create clean minimal chevrons */
+.flatpickr-current-month .numInputWrapper .arrowUp:after {
+    content: "▲" !important;
+    font-size: 10px;
+    color: #fff;
+    opacity: 0.7;
+}
+
+.flatpickr-current-month .numInputWrapper .arrowDown:after {
+    content: "▼" !important;
+    font-size: 10px;
+    color: #fff;
+    opacity: 0.7;
+}
+
+/* Hover effect */
+.flatpickr-current-month .numInputWrapper .arrowUp:hover:after,
+.flatpickr-current-month .numInputWrapper .arrowDown:hover:after {
+    opacity: 1;
+}
+
+/* Make the wrapper clean and modern */
+.flatpickr-current-month .numInputWrapper {
+    background: transparent !important;
+    border: none !important;
+    width: 55px !important;
+}
+
+.flatpickr-current-month .numInputWrapper input {
+    background: transparent !important;
+    border: none !important;
+    color: #fff !important;
+    font-weight: 600;
+    padding-right: 18px !important;
+}
+/* Hide Flatpickr's SVG and border arrows for the year input only */
+.flatpickr-current-month .numInputWrapper .arrowUp svg,
+.flatpickr-current-month .numInputWrapper .arrowDown svg {
+    display: none !important;
+}
+.flatpickr-current-month .numInputWrapper .arrowUp,
+.flatpickr-current-month .numInputWrapper .arrowDown {
+    border: none !important;
+    background: transparent !important;
+    width: auto !important;
+    height: auto !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    box-shadow: none !important;
+    /* Remove any default padding/margin if needed */
+    padding: 0 !important;
+    margin: 0 !important;
 }

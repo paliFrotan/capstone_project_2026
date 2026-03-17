@@ -261,7 +261,6 @@ def month_transactions(request):
     month_param = request.GET.get("month")
     date_param = request.GET.get("date")
     page = int(request.GET.get("page", 1))
-    save_date = date_param
 
     if month_param:
         yyyy, mm = month_param.split("-")
@@ -322,7 +321,6 @@ def month_transactions(request):
             "start": start,           # <-- add this
             "end": end,               # <-- add this
             "total_pages": paginator.num_pages,  # <-- add this if you want
-            "save_date": save_date,
         },
     )
    
@@ -431,6 +429,9 @@ def print_month_report(request, year, month):
         transactions = transactions.filter(date__day=search_day)
 
     transactions = transactions.order_by('date')
+    selected_date = request.GET.get("date", "")
+
+    # ⭐ Add limit and start for chunking
 
     income_pence = sum(t.amount_pence for t in transactions if t.type == Transaction.INCOME)
     expenses_pence = sum(t.amount_pence for t in transactions if t.type == Transaction.EXPENSE)
@@ -446,6 +447,7 @@ def print_month_report(request, year, month):
         'expenses': expenses_pence / 100,
         'balance': balance_pence / 100,
         'show_summary': show_summary,
+        'selected_date': selected_date,
     }
 
     return render(request, 'wallet/print_month_report.html', context)
