@@ -13,6 +13,11 @@ from django.http import HttpResponseRedirect
 from .forms import ExpenseForm, IncomeForm, StartingBalanceForm
 from .models import StartingBalance, Transaction
 from .utils import parse_amount
+from django import forms
+
+
+class PasswordResetForm(forms.Form):
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
 
 
 @login_required
