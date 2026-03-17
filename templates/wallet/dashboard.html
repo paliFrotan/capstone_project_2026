@@ -371,12 +371,12 @@
         {% endif %}
     {% endfor %}
     <script>
-        window.dashboardMessages = [
-            {% for message in messages %}
-                {text: "{{ message|escapejs }}", type: "{{ message.tags|default:'info' }}"},
-            {% endfor %}
-        ];
-        window.showCsvHelp = {{ show_csv_help|yesno:"true,false" }};
+    window.dashboardMessages = [
+        {% for message in messages %}
+            {text: "{{ message|escapejs }}", type: "{{ message.tags|default:'info' }}"},
+        {% endfor %}
+    ];
+    window.showCsvHelp = window.dashboardMessages.some(m => m.type.includes('csv_format_help'));
     </script>
 {% endwith %}
 {% if not messages %}
