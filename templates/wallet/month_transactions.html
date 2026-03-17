@@ -1,14 +1,13 @@
 <!-- prettier-ignore -->
 
-{% extends "base.html" %} {% block title %}WiseWallet - Current Month
+{% extends "base.html" %} {% block title %}WiseWallet - Selected Month Items
 {% endblock %} 
 {% load static %}
 {% block content %}
 
 <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
     <div>
-        <h1 class="h3 mb-1">Current month</h1>
-        <div class="text-white-50">Month: {{ month_start|date:"Y-m" }}</div>
+        <h1 class="h3 mb-1">Month {{ month_start|date:"F" }}</h1>
     </div>
     
     <div

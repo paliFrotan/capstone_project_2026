@@ -444,6 +444,10 @@ def print_month_report(request, year, month):
    
     show_summary = not search_text and not search_day
     
+
+    date_obj = date_cls(year, month, 1)
+    month_name = date_obj.strftime("%B")
+
     context = {
         'year': year,
         'month': month,
@@ -453,6 +457,7 @@ def print_month_report(request, year, month):
         'balance': balance_pence / 100,
         'show_summary': show_summary,
         'selected_date': selected_date,
+        'month_name': month_name,
     }
 
     return render(request, 'wallet/print_month_report.html', context)

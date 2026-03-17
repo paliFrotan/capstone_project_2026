@@ -193,12 +193,11 @@
         </div>
         <!-- NEW: Current month list card -->
         <div class="glass p-3 rounded-4 mt-3">
-            <div class="fw-semibold mb-1">Current month transactions</div>
+            <div class="fw-semibold mb-1">Month {{ selected_month|date:"F" }}</div>
             <div class="text-white-50 mb-3">
-                View all income and expenses for this month in date order. Edit
-                or delete items.
+                View all income and expenses in date order. You can edit,
+                delete or search for items. 
             </div>
-
             <a
                 class="btn btn-ww w-100"
                 href="{% url 'month_transactions' %}?month={{ selected_month|date:'Y-m' }}&date={{ selected_date|date:'Y-m-d' }}"
@@ -215,7 +214,6 @@
                 class="d-flex flex-wrap justify-content-between align-items-center gap-2"
             >
                 <div class="fw-semibold">Add transaction</div>
-
                 <form
                     class="d-flex gap-2"
                     method="get"
@@ -234,7 +232,7 @@
                         id="date-picker"
                         value="{{ selected_date|date:'Y-m-d' }}"
                     />
-                    <button class="btn btn-sm btn-outline-light" type="submit">
+                    <button class="btn btn-sm btn-outline-light" id="go-btn" type="submit">
                         Go
                     </button>
                 </form>
@@ -319,7 +317,7 @@
 
             <hr class="border-light opacity-25 mt-4" />
 
-            <div class="fw-semibold mb-2">Transactions (selected date)</div>
+            <div class="fw-semibold mb-2">All transactions for {{ selected_month|date:"F" }} </div>
 
             <div
                 class="table-responsive"
@@ -386,4 +384,5 @@
 </script>
 {% endif %}
 <script src="{% static 'js/script.js' %}"></script>
+
 {% endblock %}
