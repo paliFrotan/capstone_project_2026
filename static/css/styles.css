@@ -774,3 +774,23 @@ body {
     padding: 0 !important;
     margin: 0 !important;
 }
+/* Dark grey placeholder for all inputs */
+::placeholder {
+    color: #555 !important; /* dark grey */
+    opacity: 1;
+}
+
+/* For cross-browser compatibility */
+input::placeholder,
+textarea::placeholder {
+    color: #555 !important;
+    opacity: 1;
+}
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+    color: #555 !important;
+}
+input::-ms-input-placeholder,
+textarea::-ms-input-placeholder {
+    color: #555 !important;
+}
