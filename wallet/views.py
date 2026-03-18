@@ -5,20 +5,45 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 from datetime import date as date_cls
 from django.contrib.auth import login, authenticate
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import PasswordResetForm
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils.timezone import datetime
 from django.urls import reverse
 from django.http import HttpResponseRedirect
-from .forms import ExpenseForm, IncomeForm, StartingBalanceForm
+from django import forms
+from .forms import ExpenseForm, IncomeForm, StartingBalanceForm,CustomUserCreationForm
+from wallet.forms import CustomUserCreationForm
 from .models import StartingBalance, Transaction
 from .utils import parse_amount
-from django import forms
 
+class CustomPasswordResetForm(PasswordResetForm):
+    # Add any custom fields or validation here if needed
+
+    # You can override the save method if you want custom behavior
+    def save(self, *args, **kwargs):
+        # Call the parent save method to send the email
+        return super().save(*args, **kwargs)
 
 class PasswordResetForm(forms.Form):
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
 
+
+def custom_password_reset(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        user = User.objects.filter(username=username).first()
+        if user and user.email and user.email.strip():
+            form = CustomPasswordResetForm({'email': user.email})
+            if form.is_valid():
+                form.save(request=request)
+                messages.success(request, "Password reset instructions sent to your email.")
+            return redirect('login')
+        else:
+            messages.error(request, "No email associated with this account. Please contact support or your administrator.", extra_tags="pwreset")
+            return redirect('login')
+    else:
+        return render(request, "registration/password_reset_form.html")
 
 @login_required
 def import_csv(request):
@@ -89,14 +114,14 @@ def register(request):
         return redirect("dashboard")
 
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
             messages.success(request, "Your account has been created. Welcome!")
             return redirect("dashboard")
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
 
     return render(request, "registration/register.html", {"form": form})
 

@@ -1,7 +1,15 @@
 from datetime import date as date_cls
-from django import forms
 from .utils import parse_amount   # or wherever you placed it
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+from django import forms
 
+class CustomUserCreationForm(UserCreationForm):
+    email = forms.EmailField(required=False, help_text="Optional.")
+
+    class Meta:
+        model = User
+        fields = ("username", "email", "password1", "password2")
 
 class StartingBalanceForm(forms.Form):
     month = forms.DateField(

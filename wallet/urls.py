@@ -1,15 +1,13 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
-
-
-
 from . import views
 from wallet.views import (
     landing,
     month_transactions,
     transaction_edit,
     transaction_delete,
+    custom_password_reset,
 )
 
 urlpatterns = [
@@ -19,11 +17,9 @@ urlpatterns = [
     # Password reset
     path(
         'password-reset/',
-        auth_views.PasswordResetView.as_view(
-            template_name='registration/password_reset_form.html'
-        ),
+        custom_password_reset,
         name='password_reset'
-    ),
+),
 
     path(
         'password-reset/done/',
