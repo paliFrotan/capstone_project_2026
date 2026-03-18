@@ -10,11 +10,30 @@
         <h1 class="h3 mb-1">Month {{ month_start|date:"F" }}</h1>
     </div>
 
-    <div
-        id="month-toast"
-        class="position-absolute start-50 translate-middle-x"
-        style="top: 6.0rem; z-index: 1056; display: none"
-    ></div>
+    {% if messages %}
+        <div class="toast-container position-static" style="z-index: 1056;">
+            {% for message in messages %}
+                <div class="toast align-items-center text-bg-{{ message.tags|default:'info' }} border-0 show mb-2" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            {{ message }}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+                toastElList.map(function(toastEl) {
+                    var toast = new bootstrap.Toast(toastEl, { delay: 4000 });
+                    toast.show();
+                });
+            });
+        </script>
+    {% endif %}
+
     <div class="d-flex gap-2 align-items-center">
         <a
             href="{% url 'print_month_report' year month %}?search_text={{ request.GET.search_text }}&search_day={{ request.GET.search_day }}&date={{ selected_date|date:'Y-m-d' }}"
