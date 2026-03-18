@@ -31,17 +31,17 @@ class PasswordResetForm(forms.Form):
 
 def custom_password_reset(request):
     if request.method == "POST":
-        username = request.POST.get("username")
-        user = User.objects.filter(username=username).first()
+        email = request.POST.get("email")
+        user = User.objects.filter(email=email).first()
         if user and user.email and user.email.strip():
             form = CustomPasswordResetForm({'email': user.email})
             if form.is_valid():
                 form.save(request=request)
                 messages.success(request, "Password reset instructions sent to your email.")
-            return redirect('login')
+            return redirect('password_reset_done')
         else:
-            messages.error(request, "No email associated with this account. Please contact support or your administrator.", extra_tags="pwreset")
-            return redirect('login')
+            error_message = "No user with that email or no email associated with this account. Please contact support or your administrator."
+            return render(request, "registration/password_reset_form.html", {"error_message": error_message, "email": email})
     else:
         return render(request, "registration/password_reset_form.html")
 

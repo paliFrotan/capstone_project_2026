@@ -166,4 +166,3 @@ EMAIL_HOST_PASSWORD ="lcnbwyvmzoaybgsr"    # your Outlook password or app passwo
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-
