@@ -129,6 +129,7 @@ def register(request):
     
 @login_required(login_url="login")
 def dashboard(request):
+    
     today = date_cls.today()
 
     # --- Read selected date ---
@@ -264,6 +265,13 @@ def dashboard(request):
         t.signed_amount_pence() for t in transactions.filter(date__lte=selected_date)
     )
     balance_at_date_pence = starting_pence + signed_total
+    message_list = [
+        {
+            "text": m.message,
+            "type": m.tags or "info"
+        }
+        for m in messages.get_messages(request)
+    ]
 
     context = {
         "selected_month": selected_month,
@@ -276,6 +284,7 @@ def dashboard(request):
         "expense_form": expense_form,
         "starting_balance_str": pence_to_gbp_input_str(starting_pence),
         "balance_at_date_str": pence_to_gbp_input_str(balance_at_date_pence),
+        "message_list": message_list,
     }
     # Clear sample errors after displaying
     if 'csv_sample_errors' in request.session:

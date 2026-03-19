@@ -17,6 +17,7 @@
         </div>
     </div>
     <!-- Toast container between Dashboard and cog -->
+
     <div
         id="dashboard-toast"
         class="position-absolute start-50 translate-middle-x"
@@ -59,15 +60,16 @@
     class="modal fade"
     id="resetMonthModal"
     tabindex="-1"
+    role="dialog"
     aria-labelledby="resetMonthModalLabel"
     aria-hidden="true"
 >
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content glass rounded-4">
             <div class="modal-header border-0">
-                <h5 class="modal-title" id="resetMonthModalLabel">
+                <h2 class="modal-title" id="resetMonthModalLabel">
                     Reset Month
-                </h5>
+                </h2>
                 <button
                     type="button"
                     class="btn-close"
@@ -109,40 +111,79 @@
 </div>
 
 <!-- Upload CSV Modal -->
-<div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+<div
+    class="modal fade"
+    id="uploadModal"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="uploadModalLabel"
+    aria-hidden="true"
+>
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content glass rounded-4">
             <div class="modal-header border-0">
-                <h5 class="modal-title" id="uploadModalLabel">Upload Transactions CSV</h5>
-                <button type="button" class="btn-close bg-white rounded-circle p-2 shadow" style="opacity:1; border:1px solid #ddd;" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h2 class="modal-title" id="uploadModalLabel">
+                    Upload Transactions CSV
+                </h2>
+                <button
+                    type="button"
+                    class="btn-close bg-white rounded-circle p-2 shadow"
+                    style="opacity: 1; border: 1px solid #ddd"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
             </div>
             <div class="modal-body">
-                <form id="csv-upload-form" method="post" enctype="multipart/form-data" action="{% url 'import_csv' %}">
+                <form
+                    id="csv-upload-form"
+                    method="post"
+                    enctype="multipart/form-data"
+                    action="{% url 'import_csv' %}"
+                >
                     {% csrf_token %}
                     <div class="mb-3">
-                        <label for="csvFileInput" class="form-label">Select CSV file</label>
-                        <input class="form-control" type="file" id="csvFileInput" name="csv_file" accept=".csv" required />
+                        <label for="csvFileInput" class="form-label"
+                            >Select CSV file</label
+                        >
+                        <input
+                            class="form-control"
+                            type="file"
+                            id="csvFileInput"
+                            name="csv_file"
+                            accept=".csv"
+                            required
+                        />
                     </div>
-                    <button class="btn btn-ww w-100" type="submit">Upload</button>
+                    <button class="btn btn-ww w-100" type="submit">
+                        Upload
+                    </button>
                 </form>
                 <div id="csv-help" class="mt-4 d-none">
                     <div class="alert alert-warning">
                         <strong>CSV Format Instructions:</strong>
                         <ol class="mb-1 mt-2">
                             <li>File must be <b>UTF-8</b> encoded.</li>
-                            <li>Header row required: <code>date,description,type,amount_pence</code></li>
+                            <li>
+                                Header row required:
+                                <code>date,description,type,amount_pence</code>
+                            </li>
                             <li><b>date</b>: YYYY-MM-DD (e.g. 2026-03-14)</li>
                             <li><b>description</b>: Text description</li>
                             <li><b>type</b>: income or expense</li>
-                            <li><b>amount_pence</b>: Integer amount in pence (e.g. 1234 for £12.34)</li>
+                            <li>
+                                <b>amount_pence</b>: Integer amount in pence
+                                (e.g. 1234 for £12.34)
+                            </li>
                         </ol>
-                        <div>Example row: <code>2026-03-14,Salary,income,123400</code></div>
+                        <div>
+                            Example row:
+                            <code>2026-03-14,Salary,income,123400</code>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </div>
 
 <div class="row g-3">
@@ -193,10 +234,12 @@
         </div>
         <!-- NEW: Current month list card -->
         <div class="glass p-3 rounded-4 mt-3">
-            <div class="fw-semibold mb-1">Month {{ selected_month|date:"F" }}</div>
+            <div class="fw-semibold mb-1">
+                Month {{ selected_month|date:"F" }}
+            </div>
             <div class="text-white-50 mb-3">
-                View all income and expenses in date order. You can edit,
-                delete or search for items. 
+                View all income and expenses in date order. You can edit, delete
+                or search for items.
             </div>
             <a
                 class="btn btn-ww w-100"
@@ -232,7 +275,11 @@
                         id="date-picker"
                         value="{{ selected_date|date:'Y-m-d' }}"
                     />
-                    <button class="btn btn-sm btn-outline-light" id="go-btn" type="submit">
+                    <button
+                        class="btn btn-sm btn-outline-light"
+                        id="go-btn"
+                        type="submit"
+                    >
                         Go
                     </button>
                 </form>
@@ -306,18 +353,19 @@
                             name="amount_gbp"
                             placeholder="0.00"
                         />
-                        
+
                         <button class="btn btn-ww w-100" type="submit">
                             Add expense
                         </button>
-                        
                     </form>
                 </div>
             </div>
 
             <hr class="border-light opacity-25 mt-4" />
 
-            <div class="fw-semibold mb-2">All transactions for {{ selected_month|date:"F" }} </div>
+            <div class="fw-semibold mb-2">
+                All transactions for {{ selected_month|date:"F" }}
+            </div>
 
             <div
                 class="table-responsive"
@@ -359,30 +407,20 @@
 {% endblock %}
 
 <!-- prettier-ignore -->
-{% block scripts %} {{ block.super }}
-{% load static %}
-{% with show_csv_help=False %}
-    {% for message in messages %}
-        {% if 'csv_format_help' in message.tags %}
-            {% with show_csv_help=True %}
-            {% endwith %}
-        {% endif %}
-    {% endfor %}
-    <script>
-    window.dashboardMessages = [
-        {% for message in messages %}
-            {text: "{{ message|escapejs }}", type: "{{ message.tags|default:'info' }}"},
-        {% endfor %}
-    ];
-    window.showCsvHelp = window.dashboardMessages.some(m => m.type.includes('csv_format_help'));
-    </script>
-{% endwith %}
-{% if not messages %}
-<script>
-    window.dashboardMessages = [];
-    window.showCsvHelp = false;
-</script>
-{% endif %}
-<script src="{% static 'js/script.js' %}"></script>
+{% block extra_js %}
+    {{ block.super }}
+ 
+{{ message_list|json_script:"dashboard-messages" }}
 
+<script>
+    const msgScript = document.getElementById("dashboard-messages");
+    window.dashboardMessages = msgScript
+        ? JSON.parse(msgScript.textContent)
+        : [];
+    window.showCsvHelp =
+        Array.isArray(window.dashboardMessages) &&
+        window.dashboardMessages.some((m) =>
+            m.type.includes("csv_format_help"),
+        );
+</script>
 {% endblock %}

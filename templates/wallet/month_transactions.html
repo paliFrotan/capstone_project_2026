@@ -1,5 +1,4 @@
 <!-- prettier-ignore -->
-
 {% extends "base.html" %} {% block title %}WiseWallet - Selected Month Items
 {% endblock %} 
 {% load static %}
@@ -62,8 +61,8 @@
 </div>
 
 <form method="get" class="d-flex gap-2 mb-3 align-items-end">
-    <input type="hidden" name="month" value="{{ month_start|date:'Y-m' }}" />
-    <input type="hidden" name="date" value="{{ selected_date|date:'Y-m-d' }}" />
+    <input type="hidden" name="month" value="{{ month_start|date:'Y-m' }}" >
+    <input type="hidden" name="date" value="{{ selected_date|date:'Y-m-d' }}" >
     <div>
         <label for="search_text" class="form-label mb-0 small"
             >Description</label
@@ -74,7 +73,7 @@
             name="search_text"
             class="form-control form-control-sm"
             value="{{ request.GET.search_text }}"
-        />
+        >
     </div>
     <div>
         <label for="search_day" class="form-label mb-0 small"
@@ -88,7 +87,7 @@
             max="31"
             class="form-control form-control-sm"
             value="{{ request.GET.search_day }}"
-        />
+        >
     </div>
     <button type="submit" class="btn btn-sm btn-outline-light">Search</button>
 </form>
@@ -179,15 +178,16 @@
                 </a>
             </li>
             {% endif %}
-        </ul>
+            </ul>
+        </nav>
         {# closes .glass p-3 rounded-4 #}
     </div>
     {# closes .table-responsive or main content div #}
 </div>
-
+</div>
 <!-- prettier-ignore -->
 {% endblock %}
-{% block scripts %} {{ block.super }} 
+{% block extra_scripts %} {{ block.super }} 
 {% if messages %}
 <script>
     window.monthToasts = [
@@ -200,5 +200,4 @@
     ];
 </script>
 {% endif %} 
-<script src="{% static 'js/script.js' %}"></script>
 {% endblock %}

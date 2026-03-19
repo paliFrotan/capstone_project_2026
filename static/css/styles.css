@@ -794,3 +794,7 @@ input::-ms-input-placeholder,
 textarea::-ms-input-placeholder {
     color: #555 !important;
 }
+.modal-title {
+    font-size: 1.25rem; /* or whatever size you want */
+    /* other styles */
+}
