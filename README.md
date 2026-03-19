@@ -34,6 +34,7 @@ WiseWallet is a simple, private monthly budget tracker that lets users:
     - [Lighthouse Report](#lighthouse-report)
     - [CSS Testing (W3C)](#css-testing-w3c)
     - [HTML Testing (W3C)](#html-testing-w3c)
+    - [Manual Test Cases for WiseWallet User Stories](#manual-test-cases-for-wisewallet-user-stories)
 - [Deployment](#deployment)
 - [Real-Time Testing/Alerts](#real-time-testingalerts)
 - [Use of AI](#use-of-ai)
@@ -256,6 +257,26 @@ Manual testing includes:
 - starting balance creation/update
 - income/expense creation
 - balance calculations
+
+### Manual Test Cases for WiseWallet User Stories
+
+| User Story / Feature                | Test Steps                                                                  | Expected Result                          | Pass/Fail | Notes |
+| ----------------------------------- | --------------------------------------------------------------------------- | ---------------------------------------- | --------- | ----- |
+| Register a new user                 | 1. Go to Register page<br>2. Fill in username, email, password<br>3. Submit | Account created, redirected to dashboard |           |       |
+| Login as existing user              | 1. Go to Login page<br>2. Enter valid credentials<br>3. Submit              | Dashboard loads, user info shown         |           |       |
+| Logout                              | 1. Click "Logout" in navbar                                                 | Redirected to login page                 |           |       |
+| Add income transaction              | 1. On dashboard, fill "Add income" form<br>2. Submit                        | Transaction appears in list              |           |       |
+| Add expense transaction             | 1. On dashboard, fill "Add expense" form<br>2. Submit                       | Transaction appears in list              |           |       |
+| Edit a transaction                  | 1. Click "Edit" on a transaction<br>2. Change details<br>3. Save            | Transaction updated in list              |           |       |
+| Delete a transaction                | 1. Click "Delete" on a transaction<br>2. Confirm deletion                   | Transaction removed from list            |           |       |
+| Upload CSV of transactions          | 1. Click "Upload CSV"<br>2. Select valid CSV<br>3. Submit                   | Transactions imported, listed            |           |       |
+| Reset month                         | 1. Click "Reset Month"<br>2. Confirm action                                 | All transactions deleted for month       |           |       |
+| View month transactions             | 1. Click "Month View"                                                       | All transactions for month listed        |           |       |
+| Print month report                  | 1. Click "Print Month Report"<br>2. View/print page                         | Printable report displays                |           |       |
+| See starting balance                | 1. View dashboard<br>2. Check "Starting balance" panel                      | Correct balance shown                    |           |       |
+| Change starting balance             | 1. Edit "Starting balance" form<br>2. Submit                                | Balance updates, reflected in dashboard  |           |       |
+| Accessibility: keyboard navigation  | 1. Tab through all interactive elements                                     | All controls accessible by keyboard      |           |       |
+| Accessibility: screen reader labels | 1. Use screen reader on forms/buttons                                       | All controls have meaningful labels      |           |       |
 
 ### Lighthouse Report
 
