@@ -297,8 +297,8 @@ Manual testing includes:
 | Print month report                  | 1. Click "Print Month Report"<br>2. View/print page                         | Printable report displays                | Pass      |       |
 | See starting balance                | 1. View dashboard<br>2. Check "Starting balance" panel                      | Correct balance shown                    | Pass      |       |
 | Change starting balance             | 1. Edit "Starting balance" form<br>2. Submit                                | Balance updates, reflected in dashboard  | Pass      |       |
-| Accessibility: keyboard navigation  | 1. Tab through all interactive elements                                     | All controls accessible by keyboard      | Pass      |       |
-| Accessibility: screen reader labels | 1. Use screen reader on forms/buttons                                       | All controls have meaningful labels      | Pass      |       |
+| Accessibility: keyboard navigation  | 1. Tab through all interactive elements                                     | All controls accessible by keyboard      | ?         |       |
+| Accessibility: screen reader labels | 1. Use screen reader on forms/buttons                                       | All controls have meaningful labels      | ?         |       |
 
 ### Lighthouse Report
 
