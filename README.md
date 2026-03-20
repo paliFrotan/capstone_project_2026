@@ -340,6 +340,12 @@ GitHub Copilot and AI assistance were used to:
 
 ---
 
+## WiseWallet Dashboard Wireframe
+
+![WiseWallet Dashboard](/images/WiseWallet)
+
+---
+
 ## Local Setup
 
 ### 1) Clone and install dependencies
