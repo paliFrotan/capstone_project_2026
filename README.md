@@ -302,21 +302,19 @@ Manual testing includes:
 
 ### Lighthouse Report
 
-_(Add mobile + desktop Lighthouse screenshots/results here.)_
+![LightHouse Report Extract](/screenshots/ExtractLightHouse.jpg)
 
 ### CSS Testing (W3C)
 
-_(Add W3C CSS validation results here.)_
+![CSS validation result](/screenshots/css_validation.jpg)
 
 ### HTML Testing (W3C)
 
-_(Add W3C HTML validation results here.)_
-
----
+## All templates passed without errors (minor change to from using template Django to js in messages)
 
 ## Deployment
 
-_(Add your deployment platform and steps here, e.g. Heroku.)_
+Heroku Deployment
 
 Typical deployment considerations:
 
@@ -331,11 +329,11 @@ Typical deployment considerations:
 
 ## Real-Time Testing/Alerts
 
-_(Optional)_ Sentry or similar monitoring can be integrated for:
+Toast messages used:
 
 - error tracking
 - performance monitoring
-- alerting
+- alerting user
 
 ---
 
