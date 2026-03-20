@@ -356,9 +356,9 @@ GitHub Copilot and AI assistance were used to:
 
 ---
 
-## WiseWallet Dashboard Wireframe
+## WiseWallet Dashboard Mockup
 
-![WiseWallet Dashboard](/images/wisewallet.jpg)
+![WiseWallet Dashboard](static/images/Mockup.jpg)
 
 ---
 
