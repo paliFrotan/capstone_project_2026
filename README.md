@@ -1,5 +1,7 @@
 # WiseWallet
 
+![WiseWallet logo](static/images/WiseWallet.jpg)
+
 The repository for my Code Institute Bootcamp capstone project, built after 14 weeks of learning HTML, CSS, JavaScript, and Python.
 
 WiseWallet is a simple, private monthly budget tracker that lets users:
@@ -342,7 +344,7 @@ GitHub Copilot and AI assistance were used to:
 
 ## WiseWallet Dashboard Wireframe
 
-![WiseWallet Dashboard](/images/WiseWallet)
+![WiseWallet Dashboard](/images/wisewallet.jpg)
 
 ---
 
