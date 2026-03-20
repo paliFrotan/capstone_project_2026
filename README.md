@@ -187,6 +187,12 @@ Monthly View allowing edit and delete
 
 ![Monthly View Page Wireframe](static/images/MonthlyViewPageWireframe.png)
 
+## WiseWallet Landing Page Mockup
+
+![WiseWallet Landing Page Mockup](static/images/Mockup.jpg)
+
+---
+
 ## Database Design
 
 ### Core models
@@ -353,12 +359,6 @@ GitHub Copilot and AI assistance were used to:
 - CSV export
 - Better currency handling with `Decimal`
 - Improved test coverage and CI pipeline
-
----
-
-## WiseWallet Dashboard Mockup
-
-![WiseWallet Dashboard](static/images/Mockup.jpg)
 
 ---
 
