@@ -173,7 +173,19 @@ WiseWallet uses:
 - glass-style panels for content sections
 - Bootstrap layout to ensure mobile-first responsiveness
 
----
+Wireframe Layout:
+
+Landing Page
+
+![Landing Page Wireframe](static/images/LandingPageWireframe.jpg)
+
+Dashboard
+
+![Dashboard Page Wireframe](static/images/DashboardPageWireframe.jpg)
+
+Monthly View allowing edit and delete
+
+![Monthly View Page Wireframe](static/images/MonthlyViewPageWireframe.png)
 
 ## Database Design
 
@@ -192,6 +204,7 @@ WiseWallet uses:
     - amount_pence (Integer)
 
 Money is stored as **pence** to keep calculations safe and consistent.
+
 ![Entity Relationship Diagram](static/images/ERD-mermaidapp.png)
 
 ---
