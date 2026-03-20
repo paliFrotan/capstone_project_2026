@@ -192,6 +192,7 @@ WiseWallet uses:
     - amount_pence (Integer)
 
 Money is stored as **pence** to keep calculations safe and consistent.
+![Entity Relationship Diagram](static/images/ERD-mermaidapp.png)
 
 ---
 
