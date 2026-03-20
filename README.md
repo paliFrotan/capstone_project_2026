@@ -189,7 +189,7 @@ Monthly View allowing edit and delete
 
 ## WiseWallet Landing Page Mockup
 
-![WiseWallet Landing Page Mockup](static/images/Mockup.jpg)
+![WiseWallet Landing Page Mockup](static/images/Mockup.png)
 
 ---
 
