@@ -339,25 +339,43 @@ Toast messages used:
 
 ## Use of AI
 
-I used AI-supported tools throughout the development of WiseWallet (March–May 2026) to assist, improve efficiency, and support learning. The following tools and usage guidelines were applied:
+Throughout the development of WiseWallet (March–May 2026), I used AI-powered tools to enhance productivity, solve problems, and support my learning. The following summarizes how AI was applied:
+
+**AI Support in Code Creation**  
+I utilized tools such as GitHub Copilot and ChatGPT to generate code snippets relevant to WiseWallet’s requirements. These tools assisted with repetitive tasks, boilerplate code, and more complex logic, especially as my codebase expanded and my views.py grew more intricate. Where AI-generated code was used, I carefully reviewed and adapted suggestions to ensure they fit the desired functionality and standards. There were occasions when AI guidance led to dead ends; for example, Copilot once suggested using a counter in a Django template, which is not supported. Overall, however, AI positively contributed to WiseWallet’s development, particularly by providing inspiration and helping to resolve challenges as they arose.
+
+**AI Assistance in Debugging**  
+AI tools significantly streamlined the debugging process by interpreting error messages and suggesting fixes. Copilot and ChatGPT helped me quickly resolve syntax errors (such as missing colons or semicolons), optimize database queries, and address edge cases. AI assistance also encouraged code cleaning, especially ensuring compliance with PEP8 standards.
+
+**Optimizing Performance and User Experience**  
+AI-driven suggestions were integral to optimizing WiseWallet’s backend performance and user interface. For example, Copilot’s recommendations helped me refine views to only bring in essential data, especially in increasingly complex functions like order_pizza with multiple conditional branches.
+
+**Generating and Improving Unit Tests**  
+Copilot was leveraged to draft Django unit tests for critical WiseWallet features. Generated tests helped improve coverage and gave me new ideas for manual testing, although not every suggestion was correct. All auto-generated tests were adapted as needed and confirmed against actual application behavior.
+
+**Reflection on AI’s Impact**  
+AI tools measurably improved my development efficiency, reduced repetitive coding work, and increased the quality of debugging and testing. They provided alternative solutions and explanations that supported my transition from Django beginner to more confident developer. While not every AI suggestion was 100% correct, the iterative process of review and adaptation ensured that WiseWallet’s codebase met both my learning and project objectives.
+
+---
+
+### Tools Used:
 
 - **GitHub Copilot**  
-  - Used to draft user stories, acceptance criteria, and troubleshoot common coding issues (for example, Django errors like URL reverse issues).
-  - Frequently suggested code snippets and functions in Python, Django templates, and forms.  
-  - Code generated or suggested by Copilot was **always carefully reviewed, tested, and, where necessary, refactored before being included** in the project’s codebase.
-  - Copilot assisted particularly in repetitive or boilerplate areas (such as forms, views, and tests) while all core business logic was written with full understanding and review.
+  - Assisted with drafting user stories, writing acceptance criteria, and solving issues (e.g., Django URL reversal errors).
+  - Frequently suggested Python code, Django templates, and form logic.
+  - Copilot’s suggestions were always reviewed, tested, and refactored as needed; core business logic was written with full understanding.
 
 - **Microsoft Copilot (Designer/Copilot for Microsoft 365 and Bing Image Creator)**  
-  - Occasionally used to generate or suggest images, background colours, and UI themes for the project, especially in the design of logos and visuals included in the README and the site’s UI.
-  - All AI-generated design assets were checked for originality and appropriateness before use.
+  - Used to create visuals for WiseWallet (e.g., logo, UI themes, background images).
+  - All AI-generated images were checked for originality and relevance to WiseWallet’s identity.
 
 **General Approach:**  
-- AI was used as an assistive and educational tool, never as a replacement for my own learning or decision-making.
-- Every suggestion was reviewed to ensure understanding and suitability for project requirements.
-- No generative AI was used for the entire documentation or for bypassing personal learning objectives; AI was treated as a productivity and brainstorming helper only.
+- AI was an assistive and educational tool; I did not use AI to bypass essential learning or project requirements.
+- Every AI suggestion was carefully reviewed for suitability and accuracy.
+- Documentation and key deliverables were produced through personal effort, with AI as a supplementary brainstorming and productivity resource.
 
 **Summary:**  
-AI tools like GitHub Copilot and Microsoft Copilot played a supporting role in drafting, coding, troubleshooting, and design ideation. I clearly identified, reviewed, and validated every contribution from these tools to maintain academic and professional integrity.
+AI tools like GitHub Copilot and Microsoft Copilot played a valuable supporting role in WiseWallet’s development, from ideation and rapid prototyping to design and troubleshooting. All contributions from AI were identified, reviewed, and validated to maintain both academic and professional integrity.
 ---
 
 ## Future Enhancements
