@@ -324,8 +324,19 @@ Typical deployment considerations:
 - configure database (PostgreSQL)
 - configure static file serving (Whitenoise)
 - run migrations in production
+  
+The steps for deploying to Heroku are as follows:
 
----
+Create New App: Log in to your Heroku account and click on the "Create New App" button.
+App Name: Choose a unique name for your app.
+Select Region: Choose the appropriate region (Europe was selected for this project).
+Create App: Click the "Create App" button to proceed.
+Deployment Method: In the "Deploy" tab, select GitHub as the deployment method.
+Connect to GitHub: Search for the repository name and click "Connect".
+Manual or Automatic Deployment: Select either manual or automatic deployment. Ensure the main branch is selected for deployment.
+Config Vars: In the "Settings" tab, click "Reveal Config Vars" and input the required environment variables.
+Buildpack: Select the buildpacks for your project.
+Deploy: Once the configuration is complete, click the "Deploy Branch" button. 
 
 ## Real-Time Testing/Alerts
 
@@ -339,23 +350,22 @@ Toast messages used:
 
 ## Use of AI
 
-Throughout the development of WiseWallet (March–May 2026), I used AI-powered tools to enhance productivity, solve problems, and support my learning. The following summarizes how AI was applied:
+Throughout the development of WiseWallet (March–May 2026), I used AI-powered tools to enhance productivity, solve problems, and support my learning. The following summarises how AI contributed to the project:
 
-**AI Support in Code Creation**  
-I utilized tools such as GitHub Copilot and ChatGPT to generate code snippets relevant to WiseWallet’s requirements. These tools assisted with repetitive tasks, boilerplate code, and more complex logic, especially as my codebase expanded and my views.py grew more intricate. Where AI-generated code was used, I carefully reviewed and adapted suggestions to ensure they fit the desired functionality and standards. There were occasions when AI guidance led to dead ends; for example, Copilot once suggested using a counter in a Django template, which is not supported. Overall, however, AI positively contributed to WiseWallet’s development, particularly by providing inspiration and helping to resolve challenges as they arose.
+AI Support in Code Creation
+Tools such as GitHub Copilot and ChatGPT were used to generate code snippets relevant to WiseWallet’s requirements. These tools assisted with repetitive tasks, boilerplate code, and more complex logic—especially as the codebase expanded and views.py grew more intricate. AI-generated code was always carefully reviewed and adapted to fit the desired functionality and standards. Occasionally, AI guidance led to incorrect suggestions; for example, Copilot once proposed using the keyword when in a Django template, which caused tests to fail. Nevertheless, AI had a positive overall impact, notably by inspiring solutions and helping resolve challenges as they arose.
 
-**AI Assistance in Debugging**  
-AI tools significantly streamlined the debugging process by interpreting error messages and suggesting fixes. Copilot and ChatGPT helped me quickly resolve syntax errors (such as missing colons or semicolons), optimize database queries, and address edge cases. AI assistance also encouraged code cleaning, especially ensuring compliance with PEP8 standards.
+AI Assistance in Debugging
+AI tools streamlined the debugging process by interpreting error messages and suggesting fixes. Copilot and ChatGPT helped rapidly resolve syntax errors (such as missing colons or semicolons), optimise database queries, and address edge cases. Their assistance also encouraged code cleanliness and improved compliance with PEP8 standards.
 
-**Optimizing Performance and User Experience**  
-AI-driven suggestions were integral to optimizing WiseWallet’s backend performance and user interface. For example, Copilot’s recommendations helped me refine views to only bring in essential data, especially in increasingly complex functions like order_pizza with multiple conditional branches.
+Optimising Performance and User Experience
+AI-driven suggestions were instrumental in optimising WiseWallet’s backend performance and user interface. For example, Copilot’s recommendations helped me refine views to fetch only essential data as the app’s functionality became more complex.
 
-**Generating and Improving Unit Tests**  
-Copilot was leveraged to draft Django unit tests for critical WiseWallet features. Generated tests helped improve coverage and gave me new ideas for manual testing, although not every suggestion was correct. All auto-generated tests were adapted as needed and confirmed against actual application behavior.
+Generating and Improving Unit Tests
+Copilot was leveraged to draft Django unit tests for important WiseWallet features. These generated tests improved coverage and inspired new manual testing ideas, though not every suggestion was correct or applicable as is. All auto-generated tests were adapted as needed and validated against actual application behaviour.
 
-**Reflection on AI’s Impact**  
-AI tools measurably improved my development efficiency, reduced repetitive coding work, and increased the quality of debugging and testing. They provided alternative solutions and explanations that supported my transition from Django beginner to more confident developer. While not every AI suggestion was 100% correct, the iterative process of review and adaptation ensured that WiseWallet’s codebase met both my learning and project objectives.
-
+Reflection on AI’s Impact
+AI tools measurably enhanced my development efficiency, reduced repetitive coding work, and improved the quality of debugging and testing. They provided alternative solutions and explanations that supported my growth from a Django beginner to a more confident developer. While not every AI suggestion was 100% correct, the process of review and adaptation ensured that WiseWallet’s codebase met both my learning and project objectives.
 ---
 
 ### Tools Used:
@@ -363,7 +373,7 @@ AI tools measurably improved my development efficiency, reduced repetitive codin
 - **GitHub Copilot**  
   - Assisted with drafting user stories, writing acceptance criteria, and solving issues (e.g., Django URL reversal errors).
   - Frequently suggested Python code, Django templates, and form logic.
-  - Copilot’s suggestions were always reviewed, tested, and refactored as needed; core business logic was written with full understanding.
+  - Copilot’s suggestions were always reviewed, tested, and refactored as needed; core business logic was written with a full understanding.
 
 - **Microsoft Copilot (Designer/Copilot for Microsoft 365 and Bing Image Creator)**  
   - Used to create visuals for WiseWallet (e.g., logo, UI themes, background images).
